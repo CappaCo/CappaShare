@@ -29,6 +29,7 @@ body {
     flex-direction: column;
     justify-content: center;
     background-size: 100%;
+    min-height: 100svh;
 }
 
 /* All elements inside the body */
@@ -38,7 +39,7 @@ body * {
 
 /* Nav bar */
 nav {
-    background-color: var(--background);
+    background-image: url("/images/biden.jpg");
     width: 90vw;
     padding: 2vh 5vw;
     top: 0;
@@ -49,7 +50,6 @@ nav {
 nav > div {
     display: flex;
     flex: auto;
-    /*padding: 0px 5%;*/
 }
 
 nav a:not(:has(img)) {
@@ -127,7 +127,6 @@ hr {
 a {
     color: var(--dark);
     text-decoration: none;
-    transition: color 100ms, font-size 200ms, background-color 500ms;
 }
 
 a:hover {

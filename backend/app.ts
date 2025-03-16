@@ -35,7 +35,7 @@ async function getTheFile(filePath: string): Promise<string> {
 }
 
 // API requests are to /api
-async function apiRequest(req: Request): Promise<Response> {
+function apiRequest(req: Request): Response {
     const reqMethod = req.method;
     const reqURL = new URL(req.url);
     let reqPath = reqURL.pathname.replace("/api", "");
