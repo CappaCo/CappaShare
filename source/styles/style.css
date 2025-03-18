@@ -5,8 +5,9 @@
     --primary: #ffffff;
     --secondary: #020202;
 
-    /* idk */
-    --nav-height: calc(10vh / 2vw);
+    /* Root variables */
+    --space-in: 10vw;
+    --width-in: calc(100vw - (var(--space-in) * 2));
 }
 
 /* Everything on the page */
@@ -33,15 +34,19 @@ body {
 }
 
 /* All elements inside the body */
-body * {
-    margin: auto;
+body > * {
+    margin: 0 10vw 0 10vw;
+}
+
+nav, footer, #hero {
+    padding: 0 var(--space-in);
+    width: var(--width-in);
 }
 
 /* Nav bar */
 nav {
-    background-image: url("/images/biden.jpg");
-    width: 90vw;
-    padding: 2vh 5vw;
+    background-image: url("/images/plug.png");
+    margin: 0;
     top: 0;
     display: flex;
     position: fixed;
@@ -78,6 +83,7 @@ nav > div > * {
     flex-direction: column;
     padding: 20vh 0;
     width: 100%;
+    margin: 0;
 }
 
 #hero > * {
@@ -137,7 +143,6 @@ a:hover {
 footer {
     background-color: var(--background);
     margin: auto 0px 0px 0px;
-    padding: 50px;
     display: flex;
     justify-content: space-around;
 }
@@ -145,4 +150,11 @@ footer {
 footer > * {
     display: flex;
     justify-content: space-around;
+}
+
+button {
+    color: var(--secondary);
+    padding: 100px;
+    width: auto;
+    margin: 0 auto;
 }
