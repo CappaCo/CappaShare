@@ -7,7 +7,10 @@
 
     /* Root variables */
     --space-in: 10vw;
-    --width-in: calc(100vw - (var(--space-in) * 2));
+    --width-in: calc(100% - (var(--space-in) * 2));
+
+    --nav-padding: 15px;
+    --border-on-the-nav-and-footer: 1px;
 }
 
 /* Everything on the page */
@@ -35,21 +38,27 @@ body {
 
 /* All elements inside the body */
 body > * {
-    margin: 0 10vw 0 10vw;
+    margin-left: var(--space-in);
+    margin-right: var(--space-in);
 }
 
-nav, footer, #hero {
-    padding: 0 var(--space-in);
+nav, footer {
+    padding-left: var(--space-in);
+    padding-right: var(--space-in);
     width: var(--width-in);
 }
 
 /* Nav bar */
 nav {
-    background-image: url("/images/plug.png");
+    /*background-image: url("/images/spacebgbecausenoahsdumbahhahhthinksitsunproffesional.jpg");*/
+    background-color: var(--secondary);
+    padding-top: var(--nav-padding);
+    padding-bottom: var(--nav-padding);
     margin: 0;
     top: 0;
     display: flex;
     position: fixed;
+    border-bottom: var(--border-on-the-nav-and-footer) solid #ffffff;
 }
 
 nav > div {
@@ -71,9 +80,7 @@ nav img {
 }
 
 nav > div > * {
-    margin: 0;
-    margin-top: auto;
-    margin-bottom: auto;
+    margin: auto 10px;
 }
 
 /* Hero */
@@ -139,17 +146,38 @@ a:hover {
     text-decoration: underline;
 }
 
+.button, button {
+    color: var(--secondary);
+    background-color: var(--primary);
+    padding: 15px;
+    border: none;
+    border-radius: 15px;
+}
+
+.button.secondary, button.secondary {
+    color: var(--primary);
+    background-color: var(--secondary);
+    border: 1px solid var(--primary);
+}
+
 /* Footer */
 footer {
     background-color: var(--background);
+    padding-top: 20px;
+    padding-bottom: 20px;
     margin: auto 0px 0px 0px;
     display: flex;
     justify-content: space-around;
+    border-top: var(--border-on-the-nav-and-footer) solid #ffffff;
 }
 
 footer > * {
     display: flex;
     justify-content: space-around;
+}
+
+footer a {
+    text-decoration: underline;
 }
 
 button {
