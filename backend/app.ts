@@ -2,26 +2,25 @@ import { walk } from "@std/fs";
 // import mime from "npm:mime";
 import { mime } from "https://deno.land/x/mimetypes@v1.0.0/mod.ts"
 
+const paths = ["build", "source"];
 
-const websitePath = "source";
-
-// This function returns the filepath of a file in the websitePath directory
+// This function returns the filepath of a file in the searchPath directory
 // It allows html pages to be found without the need to add .html in the URL
-async function getTheFile(filePath: string): Promise<string> {
-    // The / path returns index.html
-    if (filePath == "/") return "/index.html";
-
-    // Get all of the files in the websitePath directory
+async function getTheFile(filePath: string, searchPath: string): Promise<string> {
+    // Get all of the files in the searchPath directory
     const filePaths = [];
-    for await (const walkEntry of walk(`./${websitePath}`)) {
+    for await (const walkEntry of walk(`./${searchPath}`)) {
         // Only add files to the filePaths array
         if (walkEntry.isFile) {
             filePaths.push(
-                // Remove websitePath from the path
-                walkEntry.path.replaceAll("\\", "/").replace(websitePath, ""),
+                // Remove searchPath from the path
+                walkEntry.path.replaceAll("\\", "/").replace(searchPath, ""),
             );
         }
     }
+
+    // The / path returns index.html
+    if (filePath == "/" && filePaths.includes("/index.html")) return "/index.html";
 
     // If we add .html to the requested filePath, is it found in filePaths?
     // If so, return that file with the .html extension
@@ -70,12 +69,19 @@ async function websiteRequest(req: Request): Promise<Response> {
     const reqFilePath = decodeURIComponent(reqPath);
 
     // Get the file
-    const resFileName = await getTheFile(reqFilePath);
+    let resFileName = "404.html"
+    let realPath;
+    for (const path of paths) {
+        resFileName = await getTheFile(reqFilePath, path);
+        realPath = path;
+        if (resFileName != "/404.html") break;
+    }
+
     // If it's the 404 page, the status also needs to be a 404
-    const resStatus = resFileName == "404.html" ? 404 : 200;
+    const resStatus = resFileName == "/404.html" ? 404 : 200;
 
     // Open the file with deno
-    const file = await Deno.open(`./${websitePath}` + resFileName);
+    const file = await Deno.open(`./${realPath}` + resFileName);
     // Get the mime type from the file name
     const contentType = mime.getType(resFileName);
     // If a mime type was found, set the content-type header to that, otherwise the type is text/plain
