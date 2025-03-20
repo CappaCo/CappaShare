@@ -68,7 +68,12 @@ async function replaceInFile(file: string, replace: string): Promise<string> {
             
             const insides = lines.slice(startIndex + 1, endIndex);
             const spaces = countSpaces(lines[startIndex]);
-            replaceLines = replaceLines.map((replaceLine) => { if (replaceLine.includes(insertHere)) return insides; else return [replaceLine]; }).flat();
+            replaceLines = replaceLines.map((replaceLine) => { 
+                if (replaceLine.includes(insertHere)) {
+                    console.debug(`               Found ${insertHere}`);
+                    return insides;
+                } else return replaceLine; 
+            }).flat();
             
             lines.splice(startIndex, endIndex - startIndex + 1, ...addSpaces(replaceLines, spaces));
 
