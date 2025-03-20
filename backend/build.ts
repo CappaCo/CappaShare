@@ -35,7 +35,8 @@ function addSpaces(lines: string[], spaces: string): string[] {
 }
 
 async function replaceInFile(file: string, replace: string): Promise<string> {
-    console.log(`       Replacing ${replace}`);
+    console.group();
+    console.log(`Replacing ${replace}`);
     const replaceFile = decoder.decode(await Deno.readFile(`./${templatePath}/${replace}`));
 
     const lines = file.split("\n");
@@ -49,13 +50,16 @@ async function replaceInFile(file: string, replace: string): Promise<string> {
     let keepReplacing;
     do {
         keepReplacing = false;
+        console.group();
 
         // Replace the replaceHere comment
         const index = lines.findIndex((line) => line.includes(replaceHere));
         if (index != -1) {
             keepReplacing = true;
-            console.debug(`           Found ${replaceHere}`);
+            console.debug(`Found ${replaceHere}`);
             lines.splice(index, 1, ...addSpaces(replaceLines, countSpaces(lines[index])));
+
+            console.groupEnd();
             continue;
         }
 
@@ -64,33 +68,39 @@ async function replaceInFile(file: string, replace: string): Promise<string> {
         const endIndex = lines.findIndex((line) => line.includes(replaceEnd));
         if (startIndex != -1 && endIndex != -1) {
             keepReplacing = true;
-            console.debug(`           Found ${replaceStart} to ${replaceEnd}`);
+            console.debug(`Found ${replaceStart} to ${replaceEnd}`);
             
             const insides = lines.slice(startIndex + 1, endIndex);
             const spaces = countSpaces(lines[startIndex]);
             replaceLines = replaceLines.map((replaceLine) => { 
                 if (replaceLine.includes(insertHere)) {
-                    console.debug(`               Found ${insertHere}`);
+                    console.group();
+                    console.debug(`Found ${insertHere}`);
+                    console.groupEnd();
                     return insides;
                 } else return replaceLine; 
             }).flat();
             
             lines.splice(startIndex, endIndex - startIndex + 1, ...addSpaces(replaceLines, spaces));
 
+            console.groupEnd();
             continue;
         } else if (!(startIndex != 1 || endIndex != 1)) {
             console.error(`Start ${startIndex} and end ${endIndex}`);
             throw new Error("Start without end or end without start");
         }
+        console.groupEnd();
     } while (keepReplacing);
 
-    file = lines.join("\n");
+    console.groupEnd();
 
+    file = lines.join("\n");
     return file;
 }
 
 async function buildFile(fileName: string) {
-    console.log(`   Building ${fileName}`);
+    console.group();
+    console.log(`Building ${fileName}`);
     let content = decoder.decode(await Deno.readFile(`./${sourcePath}/${fileName}`));
 
     const fileNames = Deno.readDir(`./${templatePath}`);
@@ -99,6 +109,7 @@ async function buildFile(fileName: string) {
             content = await replaceInFile(content, file.name);
         }
     }
+    console.groupEnd();
 
     // Write new data
     const newdata = encoder.encode(content);
