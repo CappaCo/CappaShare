@@ -128,6 +128,8 @@ for await (const file of Deno.readDir(`./${sourcePath}`)) {
     }
 }
 
+console.log("Build complete!");
+
 // Generate sitemap using genSitemap.ts
 import { generateSitemap } from "./genSitemap.ts";
 
