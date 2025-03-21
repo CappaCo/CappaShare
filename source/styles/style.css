@@ -6,11 +6,17 @@
     --secondary: #020202;
 
     /* Root variables */
-    --space-in: 10vw;
+    --space-in: 10em;
     --width-in: calc(100% - (var(--space-in) * 2));
 
     --nav-padding: 15px;
-    --border-on-the-nav-and-footer: 1px;
+    --border-on-the-nav-and-footer: 2px;
+}
+
+@media only screen and (max-width: 1000px) {
+    :root {
+        --space-in: 2em;
+    }
 }
 
 /* Everything on the page */
@@ -38,8 +44,8 @@ body {
 
 /* All elements inside the body */
 body > * {
-    margin-left: var(--space-in);
-    margin-right: var(--space-in);
+    margin: 10px var(--space-in);
+    max-width: var(--width-in);
 }
 
 nav, footer {
@@ -50,7 +56,6 @@ nav, footer {
 
 /* Nav bar */
 nav {
-    /*background-image: url("/images/spacebgbecausenoahsdumbahhahhthinksitsunproffesional.jpg");*/
     background-color: var(--secondary);
     padding-top: var(--nav-padding);
     padding-bottom: var(--nav-padding);
@@ -58,7 +63,7 @@ nav {
     top: 0;
     display: flex;
     position: fixed;
-    border-bottom: var(--border-on-the-nav-and-footer) solid #ffffff;
+    border-bottom: var(--border-on-the-nav-and-footer) solid var(--primary);
 }
 
 nav > div {
@@ -88,23 +93,22 @@ nav > div > * {
     background-image: url("/images/spacebgbecausenoahsdumbahhahhthinksitsunproffesional.jpg");
     display: flex;
     flex-direction: column;
-    padding: 20vh 0;
+    padding: 20em 0 15em;
     width: 100%;
-    margin: 0;
+    max-width: none;
+    margin: 0 0 50px;
 }
 
-#hero > * {
-    margin: 0;
-    font-size: 5vw;
+#hero h1 {
+    font-size: 5em;
+}
+
+#hero h2 {
+    font-size: 3em;
 }
 
 img {
     width: 50%;
-}
-
-hr {
-    border: none;
-    border-top: 2px solid var(--grey);
 }
 
 /* Flex */
@@ -146,6 +150,7 @@ a:hover {
     text-decoration: underline;
 }
 
+/* Button */
 .button, button {
     color: var(--secondary);
     background-color: var(--primary);
@@ -168,7 +173,7 @@ footer {
     margin: auto 0px 0px 0px;
     display: flex;
     justify-content: space-around;
-    border-top: var(--border-on-the-nav-and-footer) solid #ffffff;
+    border-top: var(--border-on-the-nav-and-footer) solid var(--primary);
 }
 
 footer > * {
@@ -178,11 +183,4 @@ footer > * {
 
 footer a {
     text-decoration: underline;
-}
-
-button {
-    color: var(--secondary);
-    padding: 100px;
-    width: auto;
-    margin: 0 auto;
 }
