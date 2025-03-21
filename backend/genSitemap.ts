@@ -16,6 +16,7 @@ export async function generateSitemap() {
 
     for await (const file of files) {
         if (file.isFile && file.name.endsWith(".html")) {
+            const fileName = file.name;
             console.group();
             const priority = getPriority(file.name);
             console.groupEnd();
@@ -27,7 +28,7 @@ export async function generateSitemap() {
             urls.push(`\
     <url>
         <loc>${website}/${
-                file.name.replace("index.html", "")
+                fileName.replace(".html", "").replace("index", "")
             }</loc>${priorityLine}
     </url>`);
         }
