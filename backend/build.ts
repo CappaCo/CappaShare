@@ -127,3 +127,8 @@ for await (const file of Deno.readDir(`./${sourcePath}`)) {
         if (file.name.endsWith(".html")) await buildFile(file.name);
     }
 }
+
+// Generate sitemap using genSitemap.ts
+import { generateSitemap } from "./genSitemap.ts";
+
+generateSitemap();
