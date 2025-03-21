@@ -1,3 +1,5 @@
+// TODO: Add comments
+
 console.log("Starting build...");
 
 const sourcePath = "source";
@@ -71,14 +73,17 @@ async function replaceInFile(file: string, replace: string): Promise<string> {
             console.debug(`Found ${replaceStart} to ${replaceEnd}`);
             
             const insides = lines.slice(startIndex + 1, endIndex);
+            const insidesSpaces = countSpaces(insides[0]);
             const spaces = countSpaces(lines[startIndex]);
-            replaceLines = replaceLines.map((replaceLine) => { 
+            console.log(`Spaces: ${spaces.length}`);
+            replaceLines = replaceLines.map((replaceLine) => {
                 if (replaceLine.includes(insertHere)) {
                     console.group();
                     console.debug(`Found ${insertHere}`);
                     console.groupEnd();
-                    return insides;
-                } else return replaceLine; 
+                    const total = countSpaces(insides[0]).length - spaces.length + countSpaces(replaceLine).length;
+                    return addSpaces(insides.map((line) => {return line.slice(insidesSpaces.length)}), " ".repeat(total));
+                } else return replaceLine;
             }).flat();
             
             lines.splice(startIndex, endIndex - startIndex + 1, ...addSpaces(replaceLines, spaces));
