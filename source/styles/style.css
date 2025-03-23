@@ -64,6 +64,7 @@ nav {
     display: flex;
     position: fixed;
     border-bottom: var(--border-on-the-nav-and-footer) solid var(--primary);
+    transition: top 0.3s; /* Transition effect when sliding down (and up) */
 }
 
 nav > div {
@@ -183,4 +184,20 @@ footer > * {
 
 footer a {
     text-decoration: underline;
+}
+
+body > img {
+    margin: auto;
+}
+
+.button:hover, button:hover {
+    background-color: #666666;
+}
+
+button.disabled, a.button.disabled {
+    background-color: var(--grey);
+}
+
+.button.disabled:hover, button.disabled:hover {
+    background-color: var(--greyer);
 }

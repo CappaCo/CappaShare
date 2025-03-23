@@ -2,7 +2,14 @@ import { walk } from "@std/fs";
 // import mime from "npm:mime";
 import { mime } from "https://deno.land/x/mimetypes@v1.0.0/mod.ts"
 
+import { buildSingleFile } from "./build.ts";
+
+const decoder = new TextDecoder("utf-8");
+const encoder = new TextEncoder();
+
 const paths = ["build", "source"];
+
+const devMode = Deno.args[0] == "dev";
 
 // This function returns the filepath of a file in the searchPath directory
 // It allows html pages to be found without the need to add .html in the URL
@@ -88,6 +95,19 @@ async function websiteRequest(req: Request): Promise<Response> {
     const headers = new Headers({
         "content-type": contentType || "text/plain",
     });
+    /*
+    // Intercept file if in dev mode and build it JIT style
+    let fileString = decoder.decode(file);
+    if (devMode) {
+        fileString = await buildSingleFile(fileString);
+    }
+    const decoded = encoder.encode(fileString);
+    const burger = new ReadableStream(decoded);
+
+    const res = new Response(null, { status: resStatus, headers: headers })
+
+    res.body = burger;*/
+
     // Return the response with the status and the headers
     return new Response(file.readable, { status: resStatus, headers: headers });
 }

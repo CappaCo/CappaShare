@@ -103,17 +103,23 @@ async function replaceInFile(file: string, replace: string): Promise<string> {
     return file;
 }
 
-async function buildFile(fileName: string) {
-    console.group();
-    console.log(`Building ${fileName}`);
-    let content = decoder.decode(await Deno.readFile(`./${sourcePath}/${fileName}`));
-
+export async function buildSingleFile(content: string): Promise<string> {
     const fileNames = Deno.readDir(`./${templatePath}`);
     for await (const file of fileNames) {
         if (file.isFile) {
             content = await replaceInFile(content, file.name);
         }
     }
+    return content;
+}
+
+async function buildFile(fileName: string) {
+    console.group();
+    console.log(`Building ${fileName}`);
+    let content = decoder.decode(await Deno.readFile(`./${sourcePath}/${fileName}`));
+
+    content = await buildSingleFile(content);
+    
     console.groupEnd();
 
     // Write new data
