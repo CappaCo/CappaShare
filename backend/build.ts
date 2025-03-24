@@ -1,6 +1,5 @@
 // TODO: Add comments
-
-console.log("Starting build...");
+import { generateSitemap } from "./genSitemap.ts";
 
 const sourcePath = "source";
 const buildPath = "build";
@@ -8,20 +7,6 @@ const templatePath = "templates";
 
 const decoder = new TextDecoder("utf-8");
 const encoder = new TextEncoder();
-
-try {
-    console.log("Clearing build directory");
-    await Deno.remove(buildPath, { recursive: true });
-} catch (_e) {
-    const e = _e as Error;
-    if (e.name == "NotFound") {
-        console.log("Build directory already clear");
-    }
-    else throw e;
-}
-
-console.log("Making build directory");
-await Deno.mkdir(buildPath);
 
 function countSpaces(line: string): string {
     let spaces = "";
@@ -127,16 +112,34 @@ async function buildFile(fileName: string) {
     await Deno.writeFile(`./${buildPath}/${fileName}`, newdata);
 }
 
-for await (const file of Deno.readDir(`./${sourcePath}`)) {
-    if (file.isFile) {
-        // Only build html files
-        if (file.name.endsWith(".html")) await buildFile(file.name);
+async function buildAllFiles() {
+    console.log("Starting build...");
+
+    try {
+        console.log("Clearing build directory");
+        await Deno.remove(buildPath, { recursive: true });
+    } catch (_e) {
+        const e = _e as Error;
+        if (e.name == "NotFound") {
+            console.log("Build directory already clear");
+        }
+        else throw e;
     }
+    
+    console.log("Making build directory");
+    await Deno.mkdir(buildPath);
+
+    for await (const file of Deno.readDir(`./${sourcePath}`)) {
+        if (file.isFile) {
+            // Only build html files
+            if (file.name.endsWith(".html")) await buildFile(file.name);
+        }
+    }
+    console.log("Build complete!");
+
+    // Generate sitemap using genSitemap.ts
+    generateSitemap();
 }
 
-console.log("Build complete!");
-
-// Generate sitemap using genSitemap.ts
-import { generateSitemap } from "./genSitemap.ts";
-
-generateSitemap();
+// Check if we are running through console and build files
+if (import.meta.main) buildAllFiles();

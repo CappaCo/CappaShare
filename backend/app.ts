@@ -88,28 +88,36 @@ async function websiteRequest(req: Request): Promise<Response> {
     const resStatus = resFileName == "/404.html" ? 404 : 200;
 
     // Open the file with deno
-    const file = await Deno.open(`./${realPath}` + resFileName);
+    //const file = await Deno.open(`./${realPath}` + resFileName);
     // Get the mime type from the file name
     const contentType = mime.getType(resFileName);
     // If a mime type was found, set the content-type header to that, otherwise the type is text/plain
     const headers = new Headers({
         "content-type": contentType || "text/plain",
     });
-    /*
+
+    let readable;
+    
     // Intercept file if in dev mode and build it JIT style
-    let fileString = decoder.decode(file);
-    if (devMode) {
+    if (devMode && resFileName.endsWith(".html")) {
+        console.log(`Building ${resFileName} JIT`);
+        const file = await Deno.readFile(`./${realPath}` + resFileName);
+        let fileString = decoder.decode(file);
         fileString = await buildSingleFile(fileString);
+        const encoded = encoder.encode(fileString);
+    
+        const stream = new TransformStream();
+        const writer = stream.writable.getWriter();
+        writer.write(encoded);
+        writer.close();
+
+        readable = stream.readable;
+    } else {
+        readable = (await Deno.open(`./${realPath}` + resFileName)).readable;
     }
-    const decoded = encoder.encode(fileString);
-    const burger = new ReadableStream(decoded);
-
-    const res = new Response(null, { status: resStatus, headers: headers })
-
-    res.body = burger;*/
 
     // Return the response with the status and the headers
-    return new Response(file.readable, { status: resStatus, headers: headers });
+    return new Response(readable, { status: resStatus, headers: headers });
 }
 
 // Handle all requests to CappaShare
