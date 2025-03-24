@@ -67,6 +67,10 @@ nav {
     transition: top 0.3s; /* Transition effect when sliding down (and up) */
 }
 
+nav.hidden {
+    top: -100px;
+}
+
 nav > div {
     display: flex;
     flex: auto;
