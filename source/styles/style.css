@@ -3,7 +3,7 @@
     /* Colors */
     --background: #020202;
     --primary: #ffffff;
-    --secondary: #020202;
+    --secondary: #020202; 
 
     /* Root variables */
     --space-in: 10em;
@@ -65,10 +65,6 @@ nav {
     position: fixed;
     border-bottom: var(--border-on-the-nav-and-footer) solid var(--primary);
     transition: top 0.3s; /* Transition effect when sliding down (and up) */
-}
-
-nav.hidden {
-    top: -100px;
 }
 
 nav > div {
@@ -167,6 +163,20 @@ a:hover {
     border: 1px solid var(--primary);
 }
 
+.button:hover, button:hover {
+    color: var(--primary);
+    background-color: var(--secondary);
+    border: 1px solid var(--primary);
+}
+
+.button.secondary:hover, button.secondary:hover {
+    color: var(--secondary);
+    background-color: var(--primary);
+    padding: 15px;
+    border: none;
+    border-radius: 15px;
+}
+
 /* Footer */
 footer {
     background-color: var(--background);
@@ -189,16 +199,4 @@ footer a {
 
 body > img {
     margin: auto;
-}
-
-.button:hover, button:hover {
-    background-color: #666666;
-}
-
-button.disabled, a.button.disabled {
-    background-color: var(--grey);
-}
-
-.button.disabled:hover, button.disabled:hover {
-    background-color: var(--greyer);
 }

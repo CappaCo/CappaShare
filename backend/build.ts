@@ -66,7 +66,7 @@ async function replaceInFile(file: string, replace: string): Promise<string> {
         }
 
         if (startFound && endFound) {
-            keepReplacing = true;
+            keepReplacing = true; //69 Nice
             console.log(`Found ${replaceStart} to ${replaceEnd}`);
             
             const insides = lines.slice(startIndex + 1, endIndex);
@@ -96,7 +96,7 @@ async function replaceInFile(file: string, replace: string): Promise<string> {
 
     console.groupEnd();
 
-    file = lines.join("\n");
+    file = lines.join("\n"); 
     return file;
 }
 

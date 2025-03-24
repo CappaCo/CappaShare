@@ -89,8 +89,6 @@ async function websiteRequest(req: Request): Promise<Response> {
     // If it's the 404 page, the status also needs to be a 404
     const resStatus = resFileName == "/404.html" ? 404 : 200;
 
-    // Open the file with deno
-    //const file = await Deno.open(`./${realPath}` + resFileName);
     // Get the mime type from the file name
     const contentType = mime.getType(resFileName);
     // If a mime type was found, set the content-type header to that, otherwise the type is text/plain
