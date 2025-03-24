@@ -11,6 +11,8 @@ const paths = ["build", "source"];
 
 const devMode = Deno.args[0] == "dev";
 
+if (devMode) paths.splice(0, 1);
+
 // This function returns the filepath of a file in the searchPath directory
 // It allows html pages to be found without the need to add .html in the URL
 async function getTheFile(filePath: string, searchPath: string): Promise<string> {

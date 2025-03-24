@@ -24,10 +24,8 @@ function addSpaces(lines: string[], spaces: string): string[] {
 async function replaceInFile(file: string, replace: string): Promise<string> {
     console.group();
     console.log(`Replacing ${replace}`);
-    const replaceFile = decoder.decode(await Deno.readFile(`./${templatePath}/${replace}`));
 
     const lines = file.split("\n");
-    let replaceLines = replaceFile.split("\n");
 
     const replaceHere = `<!-- ${replace} HERE -->`;
     const replaceStart = `<!-- ${replace} START -->`;
@@ -41,21 +39,35 @@ async function replaceInFile(file: string, replace: string): Promise<string> {
 
         // Replace the replaceHere comment
         const index = lines.findIndex((line) => line.includes(replaceHere));
-        if (index != -1) {
+        const indexFound = index != -1;
+
+        // Replace the replaceStart and replaceEnd comment
+        const startIndex = lines.findIndex((line) => line.includes(replaceStart));
+        const startFound = startIndex != -1;
+        const endIndex = lines.findIndex((line) => line.includes(replaceEnd));
+        const endFound = endIndex != -1;
+
+        let replaceLines;
+        if (!(indexFound || (startFound && endFound))) {
+            console.groupEnd();
+            break;
+        }
+
+        const replaceFile = decoder.decode(await Deno.readFile(`./${templatePath}/${replace}`));
+        replaceLines = replaceFile.split("\n");
+
+        if (indexFound) {
             keepReplacing = true;
-            console.debug(`Found ${replaceHere}`);
+            console.log(`Found ${replaceHere}`);
             lines.splice(index, 1, ...addSpaces(replaceLines, countSpaces(lines[index])));
 
             console.groupEnd();
             continue;
         }
 
-        // Replace the replaceStart and replaceEnd comment
-        const startIndex = lines.findIndex((line) => line.includes(replaceStart));
-        const endIndex = lines.findIndex((line) => line.includes(replaceEnd));
-        if (startIndex != -1 && endIndex != -1) {
+        if (startFound && endFound) {
             keepReplacing = true;
-            console.debug(`Found ${replaceStart} to ${replaceEnd}`);
+            console.log(`Found ${replaceStart} to ${replaceEnd}`);
             
             const insides = lines.slice(startIndex + 1, endIndex);
             const insidesSpaces = countSpaces(insides[0]);
@@ -75,7 +87,7 @@ async function replaceInFile(file: string, replace: string): Promise<string> {
 
             console.groupEnd();
             continue;
-        } else if (!(startIndex != 1 || endIndex != 1)) {
+        } else if (!(startFound || endFound)) {
             console.error(`Start ${startIndex} and end ${endIndex}`);
             throw new Error("Start without end or end without start");
         }

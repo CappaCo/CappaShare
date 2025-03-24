@@ -77,16 +77,13 @@ nav > div {
 }
 
 nav a:not(:has(img)) {
-    color: var(--black);
     padding: 15px;
     justify-self: center;
 }
 
 nav img {
-    max-height: 10%;
     width: 64px;
     height: 64px;
-    display: inline-block;
 }
 
 nav > div > * {
@@ -98,10 +95,10 @@ nav > div > * {
     background-image: url("/images/spacebgbecausenoahsdumbahhahhthinksitsunproffesional.jpg");
     display: flex;
     flex-direction: column;
-    padding: 20em 0 15em;
+    padding: 200px 0;
     width: 100%;
     max-width: none;
-    margin: 0 0 50px;
+    margin: 100px 0 50px;
 }
 
 #hero h1 {
