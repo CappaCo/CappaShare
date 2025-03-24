@@ -1,9 +1,11 @@
 console.log("Main is running at " + document.URL);
 
 // evil sam navbar code (modified)
-let prevScrollpos = globalThis.pageYOffset;
+let prevScrollpos = 0;
 let offset = 0;
 const nav = document.getElementsByTagName("nav")[0];
+
+let funny = false;
 
 function styleTop(num) {
     nav.style.top = num + "px";
@@ -13,12 +15,16 @@ globalThis.onscroll = function() {
     const currentScrollPos = globalThis.pageYOffset;
 
     if (currentScrollPos < 100) {
-        styleTop(0);
+        offset = 0;
     } else {
-        offset += prevScrollpos - currentScrollPos;
-        offset = clamp(offset, -110, 0);
-        styleTop(offset);
+        if (funny) {
+            offset += currentScrollPos - prevScrollpos;
+        } else {
+            offset += prevScrollpos - currentScrollPos;
+            offset = clamp(offset, -110, 0);
+        }
     }
+    styleTop(offset);
     prevScrollpos = currentScrollPos;
 }
 
