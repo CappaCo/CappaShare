@@ -48,6 +48,10 @@ body > * {
     max-width: var(--width-in);
 }
 
+body > *:nth-child(2) {
+    margin: 100px auto 50px;
+}
+
 nav, footer {
     padding-left: var(--space-in);
     padding-right: var(--space-in);
@@ -91,17 +95,9 @@ nav > div > * {
     background-image: url("/images/spacebgbecausenoahsdumbahhahhthinksitsunproffesional.jpg");
     display: flex;
     flex-direction: column;
-    padding: 200px 0;
+    padding: 50px 0;
     width: 100%;
     max-width: none;
-    margin: 100px 0 50px;
-}
-
-#hero h1 {
-    font-size: 5em;
-}
-
-#hero h2 {
     font-size: 3em;
 }
 
@@ -148,35 +144,6 @@ a:hover {
     text-decoration: underline;
 }
 
-/* Button */
-.button, button {
-    color: var(--secondary);
-    background-color: var(--primary);
-    padding: 15px;
-    border: none;
-    border-radius: 15px;
-}
-
-.button.secondary, button.secondary {
-    color: var(--primary);
-    background-color: var(--secondary);
-    border: 1px solid var(--primary);
-}
-
-.button:hover, button:hover {
-    color: var(--primary);
-    background-color: var(--secondary);
-    border: 1px solid var(--primary);
-}
-
-.button.secondary:hover, button.secondary:hover {
-    color: var(--secondary);
-    background-color: var(--primary);
-    padding: 15px;
-    border: none;
-    border-radius: 15px;
-}
-
 /* Footer */
 footer {
     background-color: var(--background);
@@ -199,4 +166,33 @@ footer a {
 
 body > img {
     margin: auto;
+}
+
+/* EXTRA STYLING */
+
+/* Button */
+.button, button {
+    color: var(--secondary);
+    background-color: var(--primary);
+    padding: 15px;
+    border: 1px solid var(--primary);
+    border-radius: 15px;
+}
+
+.button.secondary, button.secondary {
+    color: var(--primary);
+    background-color: var(--secondary);
+    border: 1px solid var(--primary);
+}
+
+.button:hover, button:hover {
+    color: var(--primary);
+    background-color: var(--secondary);
+    border: 1px solid var(--primary);
+}
+
+.button.secondary:hover, button.secondary:hover {
+    color: var(--secondary);
+    background-color: var(--primary);
+    border: 1px solid var(--primary);
 }
