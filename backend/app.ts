@@ -86,6 +86,11 @@ async function websiteRequest(req: Request): Promise<Response> {
         if (resFileName != "/404.html") break;
     }
 
+    if (resFileName == "/404.html") {
+        console.log(`404: ${reqFilePath}`);
+        realPath = paths[0];
+    }
+
     // If it's the 404 page, the status also needs to be a 404
     const resStatus = resFileName == "/404.html" ? 404 : 200;
 
