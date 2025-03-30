@@ -101,11 +101,16 @@ async function replaceInFile(file: string, replace: string): Promise<string> {
 }
 
 export async function buildSingleFile(content: string): Promise<string> {
-    const fileNames = Deno.readDir(`./${templatePath}`);
-    for await (const file of fileNames) {
+    const files = Deno.readDir(`./${templatePath}`);
+    const fileNames = [];
+    for await (const file of files) {
         if (file.isFile) {
-            content = await replaceInFile(content, file.name);
+            fileNames.push(file.name);
         }
+    }
+    fileNames.sort();
+    for (const fileName of fileNames) {
+        content = await replaceInFile(content, fileName);
     }
     return content;
 }
