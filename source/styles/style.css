@@ -206,3 +206,34 @@ body > img {
     border: 2px solid var(--primary);
     border-radius: 15px;
 }
+
+.boxevil {
+    min-height: 100px;
+    --margin: 10px;
+}
+
+.boxevil > * {
+    flex-grow: 1;
+    flex-basis: 0;
+}
+
+.boxevil > :first-child {
+    margin-right: var(--margin);
+}
+
+.boxevil > :last-child {
+    margin-left: var(--margin);
+}
+
+.boxevil > :last-child > :first-child {
+    margin-bottom: var(--margin);
+}
+
+.boxevil > :last-child > :last-child {
+    margin-top: var(--margin);
+    padding: 40px;
+}
+
+.boxevil img {
+    width: 100%;
+}
