@@ -123,7 +123,8 @@ img {
 }
 
 .flex > * {
-    size: 100%;
+    flex-basis: 0;
+    flex-grow: 1;
 }
 
 .left {
@@ -178,8 +179,8 @@ body > img {
 .button, button {
     color: var(--secondary);
     background-color: var(--primary);
-    padding: 15px;
     border: 1px solid var(--primary);
+    padding: 15px;
     border-radius: 15px;
 }
 
@@ -212,11 +213,6 @@ body > img {
     --margin: 10px;
 }
 
-.boxevil > * {
-    flex-grow: 1;
-    flex-basis: 0;
-}
-
 .boxevil > :first-child {
     margin-right: var(--margin);
 }
@@ -236,4 +232,29 @@ body > img {
 
 .boxevil img {
     width: 100%;
+}
+
+/* evil flex box */
+.evil.flex > * {
+    margin: 10px;
+}
+
+/* file display list */
+ol.fileDisplay {
+    padding: 0;
+}
+
+ol.fileDisplay > li {
+    list-style: none;
+    color: var(--secondary);
+    background-color: var(--primary);
+    border: 1px solid var(--primary);
+    padding: 15px;
+    border-radius: 15px;
+    margin: 10px 0;
+    display: flex;
+}
+
+ol.fileDisplay > li * {
+    color: inherit;
 }

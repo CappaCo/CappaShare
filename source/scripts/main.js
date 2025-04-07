@@ -11,6 +11,7 @@ function styleTop(num) {
     nav.style.top = num + "px";
 }
 
+// Keep code in here to a minimum because it is run often, we don't want the client to lag when scrolling
 globalThis.onscroll = function() {
     const currentScrollPos = globalThis.pageYOffset;
 
