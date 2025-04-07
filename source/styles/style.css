@@ -208,6 +208,7 @@ body > img {
     border-radius: 15px;
 }
 
+/* evil box code */
 .boxevil {
     min-height: 100px;
     --margin: 10px;
@@ -221,13 +222,30 @@ body > img {
     margin-left: var(--margin);
 }
 
+.boxevil > :last-child > * {
+    padding: 20px;
+}
+
 .boxevil > :last-child > :first-child {
     margin-bottom: var(--margin);
 }
 
 .boxevil > :last-child > :last-child {
     margin-top: var(--margin);
-    padding: 40px;
+    padding: 20px;
+    flex-grow: 0;
+}
+
+.boxevil > :last-child > :last-child > * {
+    margin: 10px;
+}
+
+input {
+    color: var(--secondary);
+    background-color: var(--primary);
+    border: 1px solid var(--primary);
+    padding: 15px;
+    border-radius: 15px;
 }
 
 .boxevil img {
