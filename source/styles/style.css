@@ -228,12 +228,12 @@ body > img {
 
 .boxevil > :last-child > :first-child {
     margin-bottom: var(--margin);
+    flex-grow: 0;
 }
 
 .boxevil > :last-child > :last-child {
     margin-top: var(--margin);
     padding: 20px;
-    flex-grow: 0;
 }
 
 .boxevil > :last-child > :last-child > * {
@@ -241,11 +241,15 @@ body > img {
 }
 
 input {
-    color: var(--secondary);
-    background-color: var(--primary);
+    color: var(--primary);
+    background-color: var(--secondary);
     border: 1px solid var(--primary);
     padding: 15px;
     border-radius: 15px;
+}
+
+.big-text {
+    font-size: 2em;
 }
 
 .boxevil img {
@@ -276,3 +280,4 @@ ol.fileDisplay > li {
 ol.fileDisplay > li * {
     color: inherit;
 }
+

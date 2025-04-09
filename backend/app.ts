@@ -64,6 +64,12 @@ function apiRequest(req: Request): Response {
         } else return new Response('Only "GET" to /api/status pls');
     }
 
+    fetch("http://localhost:8001/", { method: reqMethod, body: req.body }).then((yupResponse) => {
+        if (yupResponse.status != 404) {
+            return yupResponse;
+        }
+    });
+
     // Pretty much a 404 for api requests
     return new Response(`API request to ${reqPath} could not be resolved`, {
         status: 404,

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
     <!-- head.html START -->
         <meta name="description" content="The CappaShare website made by Casper, Sam and Noah. (Testing page)">
@@ -11,26 +11,25 @@
         </div>       
         
         <main id="main">
-            <div class="flex boxevil">
-                <div>
-                    <img src="/images/imgplaceholder.png" class="box">
-                </div>
-                <div class="flex vertical">
-                    <div class="box">
-                        <p>Write description here</p>
+            <form method="post" action="/api/upload" enctype="multipart/form-data">
+                <div class="flex boxevil">
+                    <div ondrag="console.log('ondrag')" class="box">
+                        <img src="/images/cappa the manlet is a silly ahh ahh goober.webp" style="width: 100px; height: 100px;">
+                        <p>Drag and Drop
                         <br>
-                        <p>blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah blah</p>
-                    </div> 
-                    <div class="box">
-                        <form method="post" action="https://cappabot.com/api/chat" enctype="multipart/form-data">
-                            <input type="file" id="myFile" name="filename">
-                            <button type="submit" style="margin: auto; font-size: 35px;">Upload File</a>
-                        </form>
+                        or
+                        <br>
+                        <input type="file" id="myFile" name="filename" style = "margin: 25px;">
+                    </div>
+                    <div class="flex vertical">
+                        <input class="box big-text" type="text" id="title"  name="title" value="Add Title Here" size="4">
+                        <textarea class="box" type="text" id="description"  name="description" rows="4" cols="50">Add Description Here</textarea>
                     </div>
                 </div>
-            </div>
+                <input class="disabled" type="submit" value="Upload File" style="margin: 50px; font-size: 35px;">
+            </form>
         </main>
-        
+        <!--pebis-->
         <!-- footer.html HERE -->
     </body>
 </html>
