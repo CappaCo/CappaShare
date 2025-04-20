@@ -9,10 +9,12 @@ COPY templates/ ./templates/
 COPY deno.json .
 COPY deno.lock .
 
-EXPOSE 8000
+RUN chown -R deno:deno /app
+
+USER deno
 
 RUN deno run --allow-read --allow-write backend/build.ts
 
-USER deno
+EXPOSE 8000
 
 CMD ["run", "--allow-net", "--allow-read", "--allow-write", "backend/app.ts"]
