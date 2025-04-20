@@ -11,7 +11,7 @@ COPY deno.lock .
 
 EXPOSE 8000
 
-RUN ["deno", "run", "--allow-read", "--allow-write", "backend/build.ts"]
+RUN deno run --allow-read --allow-write backend/build.ts
 
 USER deno
 
