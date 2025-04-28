@@ -248,6 +248,14 @@ input {
     border-radius: 15px;
 }
 
+textarea {
+    color: var(--primary);
+    background-color: var(--secondary);
+    border: 1px solid var(--primary);
+    padding: 15px;
+    border-radius: 15px;
+}
+
 .big-text {
     font-size: 2em;
 }
