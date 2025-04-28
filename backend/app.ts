@@ -1,6 +1,5 @@
-import { walk } from "@std/fs";
-// import mime from "npm:mime";
-import { mime } from "https://deno.land/x/mimetypes@v1.0.0/mod.ts"
+import { walk } from "https://deno.land/std@0.224.0/fs/walk.ts";
+import { mime } from "https://deno.land/x/mimetypes@v1.0.0/mod.ts";
 
 import { buildSingleFile } from "./build.ts";
 
