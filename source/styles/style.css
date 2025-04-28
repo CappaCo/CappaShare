@@ -191,14 +191,12 @@ body > img {
 }
 
 .button:hover, button:hover {
-    color: var(--primary);
-    background-color: var(--secondary);
+    background-color: #dddddd;
     border: 1px solid var(--primary);
 }
 
 .button.secondary:hover, button.secondary:hover {
-    color: var(--secondary);
-    background-color: var(--primary);
+    background-color: #333;
     border: 1px solid var(--primary);
 }
 
