@@ -10,6 +10,7 @@ export class Addon {
 
     async load() {
         const addonImport = await import("./addons/" + this.fileName);
+        console.log("filename: " + this.fileName);
 
         this.checkRequirements(addonImport);
 
@@ -27,7 +28,11 @@ export class Addon {
         }
     }
 
-    run(_req: Request): Response | Promise<Response> {
+    check(_: string): boolean {
+        return false;
+    }
+
+    run(..._params: any[]): any | Promise<any> {
         console.log("run function not set yet");
         return new Response("server is being lazy, just wait a sec");
     }

@@ -1,4 +1,5 @@
 // TODO: Add comments
+import { walk } from "https://deno.land/std@0.224.0/fs/walk.ts";
 import { generateSitemap } from "./genSitemap.ts";
 
 const sourcePath = "source";
@@ -146,10 +147,22 @@ async function buildAllFiles() {
     console.log("Making build directory");
     await Deno.mkdir(buildPath);
 
-    for await (const file of Deno.readDir(`./${sourcePath}`)) {
+    for await (const file of walk(`./${sourcePath}/`)) {
+        console.log("path: " + file.path)
+        const realPath = file.path.replaceAll("\\", "/").split("/").slice(1).join("/");
+        console.log(realPath);
+        if (realPath == "") continue;
+        console.log("doing file");
         if (file.isFile) {
             // Only build html files
-            if (file.name.endsWith(".html")) await buildFile(file.name);
+            console.log(realPath);
+            if (file.name.endsWith(".html")) {
+                await buildFile(realPath);
+            } else {
+                await Deno.link(`./${sourcePath}/${realPath}`, `./${buildPath}/${realPath}`);
+            }
+        } else if (file.isDirectory) {
+            await Deno.mkdir(`./${buildPath}/${realPath}`);
         }
     }
     console.log("Build complete!");

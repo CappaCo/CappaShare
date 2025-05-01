@@ -1,4 +1,4 @@
-import { walk } from "https://deno.land/std@0.224.0/fs/walk.ts";
+/*import { walk } from "https://deno.land/std@0.224.0/fs/walk.ts";
 import { mime } from "https://deno.land/x/mimetypes@v1.0.0/mod.ts";
 
 import { buildSingleFile } from "./build.ts";
@@ -150,9 +150,9 @@ async function handler(req: Request) {
 }
 
 // Serve with deno
-Deno.serve(handler);
+Deno.serve(handler);*/
 
-/*
+
 import { walk } from "https://deno.land/std@0.224.0/fs/walk.ts";
 import { mime } from "https://deno.land/x/mimetypes@v1.0.0/mod.ts";
 
@@ -162,11 +162,11 @@ import { Addon } from "./addon.ts";
 
 let addonsEnabled = false;
 const addons: Array<Addon> = [];
+const websitePath = "./build/"
 
 async function loadAddons() {
     const dirContents = Deno.readDir("./backend/");
     for await (const dirEntry of dirContents) {
-        console.log("walked: " + dirEntry.path);
         if (dirEntry.isDirectory && dirEntry.name == "addons") {
             addonsEnabled = true;
             break;
@@ -179,8 +179,13 @@ async function loadAddons() {
         const addonsDirectory = "backend/addons/";
         const addonsFiles = walk("./" + addonsDirectory);
         for await (const addonsFile of addonsFiles) {
+            console.log(addonsFile.path)
+            const realPath = addonsFile.name.replaceAll("\\", "/").split("/").slice(1).join("/");
+            if (realPath == "") continue;
+            console.log("realPath: " + realPath);
             if (addonsFile.isFile) {
-                addons.push(new Addon("/" + addonsFile.path.slice(addonsDirectory.length)));
+                console.log("making new addon " + "/" + realPath);
+                addons.push(new Addon("/" + realPath));
             }
         }
     }
@@ -188,24 +193,24 @@ async function loadAddons() {
 
 loadAddons();
 
-// This function returns the filepath of a file in the website directory
+// This function returns the filepath of a file in the searchPath directory
 // It allows html pages to be found without the need to add .html in the URL
-// It will fallback to the 404 page if the file is not found
-async function getTheFile(filePath: string): Promise<string> {
-    // The / path returns index.html
-    if (filePath == "/") return "/index.html";
-
-    // Get all of the files in the website directory
+async function getTheFile(filePath: string, searchPath: string): Promise<string> {
+    // Get all of the files in the searchPath directory
     const filePaths = [];
-    for await (const walkEntry of walk("./website")) {
+    for await (const walkEntry of walk(`./${searchPath}`)) {
         // Only add files to the filePaths array
-        if (walkEntry.isFile) {
+        if (walkEntry.isFile || walkEntry.isSymlink) {
             filePaths.push(
-                // Remove "website" from the path
-                walkEntry.path.replaceAll("\\", "/").replace("website", ""),
+                // Remove searchPath from the path
+                "/" + walkEntry.path.replaceAll("\\", "/").split("/").slice(1).join("/"),
             );
         }
     }
+    console.log("doing filePath: " + filePath);
+
+    // The / path returns index.html
+    if (filePath == "/" && filePaths.includes("/index.html")) return "/index.html";
 
     // If we add .html to the requested filePath, is it found in filePaths?
     // If so, return that file with the .html extension
@@ -218,7 +223,7 @@ async function getTheFile(filePath: string): Promise<string> {
     return "/404.html";
 }
 
-// Handle requests to the website part of cappabot.com
+// Handle requests to the website part of CappaShare
 async function websiteRequest(req: Request): Promise<Response> {
     const reqURL = new URL(req.url);
     const reqPath = reqURL.pathname;
@@ -226,20 +231,54 @@ async function websiteRequest(req: Request): Promise<Response> {
     const reqFilePath = decodeURIComponent(reqPath);
 
     // Get the file
-    const resFileName = await getTheFile(reqFilePath);
-    // If it's the 404 page, the status also needs to be a 404
-    const resStatus = resFileName == "404.html" ? 404 : 200;
+    let resFileName = "404.html"
+    resFileName = await getTheFile(reqFilePath, websitePath);
+    console.log("resFileName: " + resFileName);
 
-    // Open the file with deno
-    const file = await Deno.open("./website" + resFileName);
+    if (resFileName == "/404.html") console.log(`404: ${reqFilePath}`);
+
+    // If it's the 404 page, the status also needs to be a 404
+    const resStatus = resFileName == "/404.html" ? 404 : 200;
+
     // Get the mime type from the file name
     const contentType = mime.getType(resFileName);
     // If a mime type was found, set the content-type header to that, otherwise the type is text/plain
     const headers = new Headers({
         "content-type": contentType || "text/plain",
     });
+
+    let readable;
+    
+    // Intercept file if in dev mode and build it JIT style
+    let useAddon;
+    for (const addon of addons) {
+        if (addon.check(resFileName)) {
+            useAddon = addon;
+        }
+    }
+    if (useAddon) {
+        try {
+            readable = useAddon.run(websitePath, resFileName)
+        } catch (e) {
+            console.error(e);
+        }
+    } else {
+        readable = (await Deno.open(`./${websitePath}` + resFileName)).readable;
+    }
+    // Check addons for the request
+    if (addonsEnabled) {
+        console.log("searching in addons");
+        for (const addon of addons) {
+            const validPaths = [addon.path, addon.path + "/"];
+            if (validPaths.includes(reqPath)) {
+                console.log("found: " + addon.path);
+                return await addon.run(req);
+            }
+        }
+    }
+
     // Return the response with the status and the headers
-    return new Response(file.readable, { status: resStatus, headers: headers });
+    return new Response(readable, { status: resStatus, headers: headers });
 }
 
 // Handle all requests to cappabot.com
@@ -251,6 +290,7 @@ async function handler(req: Request) {
     console.log("reqPath: " + reqPath);
 
     // Check addons for the request
+    console.log("Addons: " + addonsEnabled);
     if (addonsEnabled) {
         console.log("searching in addons");
         for (const addon of addons) {
@@ -273,5 +313,4 @@ async function handler(req: Request) {
 }
 
 // Serve with deno
-Deno.serve({ port: 8001 }, handler);
-*/
+Deno.serve(handler);
