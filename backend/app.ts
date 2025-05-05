@@ -28,8 +28,8 @@ async function loadAddons() {
             const realPath = addonsFile.path.replaceAll("\\", "/").split("/").slice(2).join("/");
             if (realPath == "") continue;
             if (addonsFile.isFile) {
-                console.log("making new addon ./" + realPath);
-                addons.push(new Addon("./" + realPath));
+                console.log("making new addon: " + realPath);
+                addons.push(new Addon(realPath));
             }
         }
     }
@@ -142,8 +142,11 @@ async function handler(req: Request) {
     if (addonsEnabled) {
         console.log("searching in addons");
         for (const addon of addons) {
-            const validPaths = [addon.path, addon.path + "/"];
-            if (validPaths.includes(reqPath)) {
+	    console.log("addon type: " + addon.type);
+	    if (addon.type != "request") continue;
+	    console.log("is this the one: " + addon.path);
+	    console.log("is this the two: " + reqPath);
+            if ("/" + addon.path == reqPath) {
                 console.log("found: " + addon.path);
                 return await addon.run(req);
             }

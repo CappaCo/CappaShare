@@ -1,4 +1,4 @@
-import { buildSingleFile } from "/Cappa/CappaShare/backend/build.ts";
+import { buildSingleFile } from "../build.ts";
 
 export const addonType = "build";
 

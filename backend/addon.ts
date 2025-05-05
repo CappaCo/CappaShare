@@ -20,9 +20,8 @@ export class Addon {
     }
 
     loadvars(addonImport: Record<string, unknown>) {
-        this.type = String(addonImport.addonType);
+        this.type = String(addonImport.addonType || "request");
         this.path = this.fileName.split("/").slice(0, -1).join("/") + addonImport.path;
-        console.log(this.type);
     }
 
     private checkRequirements(addonImport: Record<string, unknown>) {
