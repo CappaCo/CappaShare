@@ -1,10 +1,11 @@
 export class Addon {
-
     fileName: string;
-    path: string | undefined;
+    type?: string;
+    path?: string;
 
     constructor(fileName: string) {
         this.fileName = fileName;
+        this.type = "";
         this.load();
     }
 
@@ -15,11 +16,17 @@ export class Addon {
         this.checkRequirements(addonImport);
 
         this.run = addonImport.run;
+        this.loadvars(addonImport);
+    }
+
+    loadvars(addonImport: Record<string, unknown>) {
+        this.type = String(addonImport.addonType);
         this.path = this.fileName.split("/").slice(0, -1).join("/") + addonImport.path;
+        console.log(this.type);
     }
 
     private checkRequirements(addonImport: Record<string, unknown>) {
-        const requiredStuff = ["run", "path"];
+        const requiredStuff = ["run"];
 
         for (const name of requiredStuff) {
             if (typeof addonImport[name] === "undefined") {
@@ -32,7 +39,7 @@ export class Addon {
         return false;
     }
 
-    run(..._params: any[]): any | Promise<any> {
+    run(..._params: any[]): Response | any | Promise<Response | any> {
         console.log("run function not set yet");
         return new Response("server is being lazy, just wait a sec");
     }

@@ -1,11 +1,14 @@
-import { buildSingleFile } from "../build.ts";
+import { buildSingleFile } from "/Cappa/CappaShare/backend/build.ts";
+
+export const addonType = "build";
 
 const decoder = new TextDecoder("utf-8");
 const encoder = new TextEncoder();
 
-async function run(realPath: string, resFileName: string) {
-    console.log(`Building ${resFileName} JIT`);
-    const file = await Deno.readFile(`./${realPath}` + resFileName);
+export async function run(fileName: string): Promise<ReadableStream> {
+    console.log("cwd: " + Deno.cwd());
+    console.log(`Building ${fileName} JIT`);
+    const file = await Deno.readFile("./source" + fileName);
     let fileString = decoder.decode(file);
     fileString = await buildSingleFile(fileString);
     const encoded = encoder.encode(fileString);
@@ -14,10 +17,6 @@ async function run(realPath: string, resFileName: string) {
     const writer = stream.writable.getWriter();
     writer.write(encoded);
     writer.close();
-    
-    return stream.readable;
-}
 
-function check(fileName: string) {
-    return fileName.endsWith(".html");
+    return stream.readable;
 }
