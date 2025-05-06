@@ -41,6 +41,14 @@ body {
     background-size: 100%;
     min-height: 100svh;
 }
+p {
+    font-family: "Inter";
+    text-align: left;
+}
+li {
+    font-family: "Inter";
+    text-align: left;
+}
 
 /* All elements inside the body */
 body > * {
