@@ -67,7 +67,7 @@ async function replaceInFile(file: string, replace: string): Promise<string> {
         }
 
         if (startFound && endFound) {
-            keepReplacing = true; //69 Nice
+            keepReplacing = true;
             console.log(`Found ${replaceStart} to ${replaceEnd}`);
             
             const insides = lines.slice(startIndex + 1, endIndex);
@@ -134,7 +134,7 @@ async function buildAllFiles() {
     console.log("Starting build...");
 
     try {
-        console.log("Clearing build directory");
+        console.log("Clearing build directory: " + buildPath);
         await Deno.remove(buildPath, { recursive: true });
     } catch (_e) {
         const e = _e as Error;
