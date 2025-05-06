@@ -110,18 +110,12 @@ async function websiteRequest(req: Request): Promise<Response> {
         readable = (await Deno.open(`./${websitePath}` + resFileName)).readable;
     }
     // Check addons for the request
+    console.log("buldJIT: " + buildJIT);
     if (addonsEnabled && buildJIT) {
         console.log("searching in addons");
         for (const addon of addons) {
-            if (addon.type != "build") continue;
-            console.log("addonPath: " + addon.path);
-            const realPath = addon.path?.replaceAll("\\", "/").split("/").slice(0, -1).join("/");
-            const validPaths = [realPath, realPath + "/"];
-            if (validPaths.includes(reqPath)) {
-                console.log("found: " + realPath);
-                console.log("running addon with: " + resFileName)
-                readable = await addon.run(resFileName);
-            }
+            if (addon.type != "build" || !resFileName.endsWith(".html")) continue;
+            readable = await addon.run(resFileName);
         }
     }
 
