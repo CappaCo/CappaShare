@@ -5,11 +5,12 @@ import { Addon } from "./addon.ts";
 
 // TODO: Comment stuff
 
-let addonsEnabled = false;
+let addonsEnabled = false; // Don't change this, it will auto detect the addons folder
 const addons: Array<Addon> = [];
 const websitePath = "./build/";
 const buildJIT = Deno.args[0] == "dev";
 
+// Function to load all of the addons
 async function loadAddons() {
     const dirContents = Deno.readDir("./backend/");
     for await (const dirEntry of dirContents) {
@@ -19,18 +20,19 @@ async function loadAddons() {
         }
     }
 
-    if (!addonsEnabled) console.log("addons folder not found");
+    if (!addonsEnabled) {
+        console.log("addons folder not found");
+        return;
+    }
 
-    if (addonsEnabled) {
-        const addonsDirectory = "backend/addons/";
-        const addonsFiles = walk("./" + addonsDirectory);
-        for await (const addonsFile of addonsFiles) {
-            const realPath = addonsFile.path.replaceAll("\\", "/").split("/").slice(2).join("/");
-            if (realPath == "") continue;
-            if (addonsFile.isFile) {
-                console.log("making new addon: " + realPath);
-                addons.push(new Addon(realPath));
-            }
+    const addonsDirectory = "./backend/addons/";
+    const addonsFiles = walk(addonsDirectory);
+    for await (const addonsFile of addonsFiles) {
+        const realPath = addonsFile.path.replaceAll("\\", "/").split("/").slice(2).join("/");
+        if (realPath == "") continue;
+        if (addonsFile.isFile) {
+            console.log("making new addon: " + realPath);
+            addons.push(new Addon(realPath));
         }
     }
 }
@@ -40,6 +42,7 @@ loadAddons();
 // This function returns the filepath of a file in the searchPath directory
 // It allows html pages to be found without the need to add .html in the URL
 async function getTheFile(filePath: string, searchPath: string): Promise<string> {
+    console.log("Getting the file: " + filePath);
     // Get all of the files in the searchPath directory
     const filePaths = [];
     for await (const walkEntry of walk(`./${searchPath}`)) {
@@ -51,7 +54,6 @@ async function getTheFile(filePath: string, searchPath: string): Promise<string>
             );
         }
     }
-    console.log("doing filePath: " + filePath);
 
     // The / path returns index.html
     if (filePath == "/" && filePaths.includes("/index.html")) return "/index.html";
@@ -92,32 +94,18 @@ async function websiteRequest(req: Request): Promise<Response> {
     });
 
     let readable;
-    
-    // Intercept file if in dev mode and build it JIT style
-    let useAddon;
-    for (const addon of addons) {
-        if (addon.check(resFileName)) {
-            useAddon = addon;
-        }
-    }
-    if (useAddon) {
-        try {
-            readable = useAddon.run(websitePath, resFileName)
-        } catch (e) {
-            console.error(e);
-        }
-    } else {
-        readable = (await Deno.open(`./${websitePath}` + resFileName)).readable;
-    }
-    // Check addons for the request
-    console.log("buldJIT: " + buildJIT);
+
+    // Check addons for building the file JIT
+    console.log("Building file JIT: " + buildJIT);
     if (addonsEnabled && buildJIT) {
-        console.log("searching in addons");
+        console.log("Searching for build addon");
         for (const addon of addons) {
             if (addon.type != "build" || !resFileName.endsWith(".html")) continue;
             readable = await addon.run(resFileName);
         }
     }
+    
+    readable ??= (await Deno.open(`./${websitePath}` + resFileName)).readable;
 
     // Return the response with the status and the headers
     return new Response(readable, { status: resStatus, headers: headers });
@@ -129,17 +117,13 @@ async function handler(req: Request) {
     const reqURL = new URL(req.url);
     const reqPath = reqURL.pathname;
 
-    console.log("reqPath: " + reqPath);
+    console.log("Request path: " + reqPath);
 
     // Check addons for the request
-    console.log("Addons: " + addonsEnabled);
     if (addonsEnabled) {
-        console.log("searching in addons");
         for (const addon of addons) {
-	    console.log("addon type: " + addon.type);
-	    if (addon.type != "request") continue;
-	    console.log("is this the one: " + addon.path);
-	    console.log("is this the two: " + reqPath);
+            // Check if the addon is a request type
+            if (addon.type != "request") continue;
             if ("/" + addon.path == reqPath) {
                 console.log("found: " + addon.path);
                 return await addon.run(req);
