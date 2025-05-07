@@ -6,7 +6,7 @@
     --secondary: #020202; 
 
     /* Root variables */
-    --space-in: 10em;
+    --space-in: calc(20em);
     --width-in: calc(100% - (var(--space-in) * 2));
 
     --nav-padding: 15px;
@@ -16,6 +16,12 @@
 @media only screen and (max-width: 1000px) {
     :root {
         --space-in: 2em;
+    }
+}
+
+@media only screen and (max-width: 1600px) {
+    :root {
+        --space-in: 10em;
     }
 }
 
@@ -41,14 +47,6 @@ body {
     background-size: 100%;
     min-height: 100svh;
 }
-p {
-    font-family: "Inter";
-    text-align: left;
-}
-li {
-    font-family: "Inter";
-    text-align: left;
-}
 
 /* All elements inside the body */
 body > * {
@@ -64,6 +62,16 @@ nav, footer {
     padding-left: var(--space-in);
     padding-right: var(--space-in);
     width: var(--width-in);
+}
+
+/* Article */
+article * {
+    text-align: left;
+    margin: 20px auto;
+    font-size: 1.2em;
+}
+li {
+    font-size: 0.8em;
 }
 
 /* Nav bar */
@@ -107,6 +115,10 @@ nav > div > * {
     width: 100%;
     max-width: none;
     font-size: 3em;
+}
+
+#hero * {
+    text-align: center;
 }
 
 img {
