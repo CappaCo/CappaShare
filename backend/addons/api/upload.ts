@@ -3,7 +3,12 @@ console.log("upload.ts loaded");
 export const path = "/upload";
 
 export function run(req: Request): Response {
-    console.log(req);
+    const { method, url, body } = req;
+    
+    if (method != "POST") return new Response("method not allowed", { status: 405 });
+
+    console.log("body: " + body);
+
     return new Response(
         `hooray!`,
     );
