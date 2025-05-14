@@ -48,6 +48,11 @@ body {
     min-height: 100svh;
 }
 
+/* Make all of the h's bigger */
+h2, h3, h4, h5, h6 {
+    font-size: 2.5em;
+}
+
 /* All elements inside the body */
 body > * {
     margin: 10px var(--space-in);
@@ -309,6 +314,15 @@ ol.fileDisplay > li * {
     color: inherit;
 }
 
-.aboutus {
-    
+.aboutussection {
+    display: flex;
+}
+
+.aboutussection p {
+    margin: auto;
+}
+
+.aboutussection img {
+    width: 250px;
+    height: 250px;
 }
