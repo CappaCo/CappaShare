@@ -8,9 +8,9 @@
                 flex-direction: column;
             }
 
-            .fileList > div {
-                background-color: rgb(0, 0, 0);
-                border: rgb(255, 255, 255) solid 2px;
+            .fileList > a {
+                background-color: var(--primary);
+                border: var(--primary) solid 2px;
                 border-radius: 16px;
                 display: flex;
                 justify-content: space-between;
@@ -18,11 +18,20 @@
                 margin: 0px 16px;
             }
 
-            .fileList > div > div {
+            .fileList * {
+                color: var(--secondary);
+            }
+
+            .fileList > a:hover {
+                text-decoration: none;
+                background-color: var(--primary-hover)
+            }
+
+            .fileList > a > div {
                 display: flex;
             }
 
-            .fileList > div > div > * {
+            .fileList > a > div > * {
                 padding: 4px;
             }
         </style>
@@ -36,18 +45,18 @@
         
         <main id="main">
             <div class="fileList">
-                <div>
+                <a href="product.html">
                     <div>
                         <p>*</p>
-                        <p>Title</p>
+                        <p>Huge Question</p>
                     </div>
                     <div>
-                        <p>Description...</p>
+                        <p>The most important question of the century</p>
                     </div>
                     <div>
-                        <p>Tags</p>
+                        <p>#money #question #image</p>
                     </div>
-                </div>
+                </a>
             </div>
         </main>
         

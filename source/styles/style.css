@@ -6,12 +6,18 @@
     --primary: #ffffff;
     --secondary: #020202; 
 
+    /* hover */
+    --primary-hover: #ddd;
+    --secondary-hover: #333;
+
     /* Root variables */
     --space-in: calc(20em);
     --width-in: calc(100% - (var(--space-in) * 2));
 
     --nav-padding: 15px;
     --border-on-the-nav-and-footer: 2px;
+
+    --border-radius: 16px;
 }
 
 @media only screen and (max-width: 1000px) {
@@ -50,13 +56,19 @@ body {
 }
 
 /* All elements inside the body */
-body > * {
+body > *, main > * {
     margin: 10px var(--space-in);
     max-width: var(--width-in);
 }
 
 body > *:nth-child(2) {
     margin: 100px auto 50px;
+}
+
+main {
+    margin: 0px;
+    width: 100%;
+    max-width: none;
 }
 
 nav, footer {
@@ -204,7 +216,7 @@ body > img {
     background-color: var(--primary);
     border: 1px solid var(--primary);
     padding: 15px;
-    border-radius: 15px;
+    border-radius: var(--border-radius);
 }
 
 .button.secondary, button.secondary {
@@ -214,19 +226,18 @@ body > img {
 }
 
 .button:hover, button:hover {
-    background-color: #dddddd;
+    background-color: var(--primary-hover);
     border: 1px solid var(--primary);
 }
 
 .button.secondary:hover, button.secondary:hover {
-    background-color: #333;
-    border: 1px solid var(--primary);
+    background-color: var(--secondary-hover);
 }
 
 /* boxed, 200 */
 .box {
     border: 2px solid var(--primary);
-    border-radius: 15px;
+    border-radius: var(--border-radius);
 }
 
 /* evil box code */
@@ -266,7 +277,7 @@ input {
     background-color: var(--secondary);
     border: 1px solid var(--primary);
     padding: 15px;
-    border-radius: 15px;
+    border-radius: var(--border-radius);
 }
 
 textarea {
@@ -274,7 +285,7 @@ textarea {
     background-color: var(--secondary);
     border: 1px solid var(--primary);
     padding: 15px;
-    border-radius: 15px;
+    border-radius: var(--border-radius);
 }
 
 .big-text {
@@ -301,7 +312,7 @@ ol.fileDisplay > li {
     background-color: var(--primary);
     border: 1px solid var(--primary);
     padding: 15px;
-    border-radius: 15px;
+    border-radius: var(--border-radius);
     margin: 10px 0;
     display: flex;
 }
