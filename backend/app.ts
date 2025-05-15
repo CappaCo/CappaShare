@@ -77,7 +77,7 @@ async function websiteRequest(req: Request): Promise<Response> {
     const reqFilePath = decodeURIComponent(reqPath);
 
     // Get the file
-    let resFileName = "404.html"
+    let resFileName = "404.html";
     resFileName = await getTheFile(reqFilePath, websitePath);
     console.log("resFileName: " + resFileName);
 
