@@ -1,5 +1,6 @@
 /* Variables */
 :root {
+    font-size: 20px;
     /* Colors */
     --background: #020202;
     --primary: #ffffff;
@@ -46,11 +47,6 @@ body {
     justify-content: center;
     background-size: 100%;
     min-height: 100svh;
-}
-
-/* Make all of the h's bigger */
-h2, h3, h4, h5, h6 {
-    font-size: 2.5em;
 }
 
 /* All elements inside the body */
@@ -119,7 +115,7 @@ nav > div > * {
     padding: 50px 0;
     width: 100%;
     max-width: none;
-    font-size: 3em;
+    font-size: 2em;
 }
 
 #hero * {

@@ -3,9 +3,27 @@
     <!-- head.html START -->
         <meta name="description" content="The CappaShare website made by Casper, Sam and Noah. (Testing page)">
         <style>
-            main div {
-                background-color: rgb(100, 175, 241);
-                border: rgb(185, 174, 123) solid 2px;
+            .fileList {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .fileList > div {
+                background-color: rgb(0, 0, 0);
+                border: rgb(255, 255, 255) solid 2px;
+                border-radius: 16px;
+                display: flex;
+                justify-content: space-between;
+                padding: 16px;
+                margin: 0px 16px;
+            }
+
+            .fileList > div > div {
+                display: flex;
+            }
+
+            .fileList > div > div > * {
+                padding: 4px;
             }
         </style>
     <!-- head.html END -->
@@ -13,35 +31,24 @@
         <!-- nav.html HERE -->
 
         <div id="hero">
-            <h1>Download file/s</h1>
+            <h1>Download file/s here</h1>
         </div>       
         
         <main id="main">
-            <p>Sam is sillyyyyyyyyyyyyyyyy</p>
-            <p>Sam is sillyyyyyyyyyyyyyyyy</p>
-            <p>Sam is sillyyyyyyyyyyyyyyyy</p>
-            <p>Sam is sillyyyyyyyyyyyyyyyy</p>
-            <p>Sam is sillyyyyyyyyyyyyyyyy</p>
-            <p>Sam is sillyyyyyyyyyyyyyyyy</p>
-            <p>Sam is sillyyyyyyyyyyyyyyyy</p>
-            <p>Sam is sillyyyyyyyyyyyyyyyy</p>
-            <p>Sam is sillyyyyyyyyyyyyyyyy</p>
-            <p>Sam is sillyyyyyyyyyyyyyyyy</p>
-            <p>Sam is sillyyyyyyyyyyyyyyyy</p>
-            <p>Sam is sillyyyyyyyyyyyyyyyy</p>
-            <p>Sam is sillyyyyyyyyyyyyyyyy</p>
-            <p>Sam is sillyyyyyyyyyyyyyyyy</p>
-            <p>Sam is sillyyyyyyyyyyyyyyyy</p>
-            <p>Sam is sillyyyyyyyyyyyyyyyy</p>
-            <p>Sam is sillyyyyyyyyyyyyyyyy</p>
-            <p>Sam is sillyyyyyyyyyyyyyyyy</p>
-            <p>Sam is sillyyyyyyyyyyyyyyyy</p>
-            <p>Sam is sillyyyyyyyyyyyyyyyy</p>
-            <p>Sam is sillyyyyyyyyyyyyyyyy</p>
-            <p>Sam is sillyyyyyyyyyyyyyyyy</p>
-            <p>Sam is sillyyyyyyyyyyyyyyyy</p>
-            <p>Sam is sillyyyyyyyyyyyyyyyy</p>
-            <p>Sam is sillyyyyyyyyyyyyyyyy</p>
+            <div class="fileList">
+                <div>
+                    <div>
+                        <p>*</p>
+                        <p>Title</p>
+                    </div>
+                    <div>
+                        <p>Description...</p>
+                    </div>
+                    <div>
+                        <p>Tags</p>
+                    </div>
+                </div>
+            </div>
         </main>
         
         <!-- footer.html HERE -->
