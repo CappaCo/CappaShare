@@ -8,6 +8,7 @@ import { Addon } from "./addon.ts";
 let addonsEnabled = false; // Don't change this, it will auto detect the addons folder
 const addons: Array<Addon> = [];
 const websitePath = "./build/";
+const sourcePath = "./source/";
 const buildJIT = Deno.args[0] == "dev";
 
 // Function to load all of the addons
@@ -64,6 +65,8 @@ async function getTheFile(filePath: string, searchPath: string): Promise<string>
 
     // If the file is found then return that file
     if (filePaths.includes(filePath)) return filePath;
+
+    if (searchPath == websitePath) return getTheFile(filePath, sourcePath);
 
     // If no files are found, return the 404 page
     return "/404.html";

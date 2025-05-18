@@ -16,6 +16,7 @@
 
     --nav-padding: 15px;
     --border-on-the-nav-and-footer: 2px;
+    --margin-vertical: 10px;
 
     --border-radius: 16px;
 }
@@ -56,7 +57,7 @@ body {
 }
 
 /* All elements inside the body */
-body > *, main > * {
+body > * {
     margin: 10px var(--space-in);
     max-width: var(--width-in);
 }
@@ -65,10 +66,18 @@ body > *:nth-child(2) {
     margin: 100px auto 50px;
 }
 
+body img {
+    border-radius: var(--border-radius);
+}
+
 main {
-    margin: 0px;
-    width: 100%;
-    max-width: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+main > * {
+    margin: var(--margin-vertical) auto;
 }
 
 nav, footer {
@@ -83,6 +92,7 @@ article * {
     margin: 20px auto;
     font-size: 1.2em;
 }
+
 li {
     font-size: 0.8em;
 }
@@ -302,23 +312,47 @@ textarea {
 }
 
 /* file display list */
-ol.fileDisplay {
-    padding: 0;
-}
-
-ol.fileDisplay > li {
-    list-style: none;
-    color: var(--secondary);
-    background-color: var(--primary);
-    border: 1px solid var(--primary);
-    padding: 15px;
-    border-radius: var(--border-radius);
-    margin: 10px 0;
+.fileList {
     display: flex;
+    flex-direction: column;
 }
 
-ol.fileDisplay > li * {
-    color: inherit;
+.fileList > a {
+    background-color: var(--primary);
+    border: var(--primary) solid 2px;
+    border-radius: 16px;
+    display: flex;
+    justify-content: space-between;
+    padding: 16px;
+    margin: var(--margin-vertical) 16px;
+    width: 100%;
+}
+
+.fileList * {
+    color: var(--secondary);
+}
+
+.fileList > a:hover {
+    text-decoration: none;
+    background-color: var(--primary-hover)
+}
+
+.fileList > a > div {
+    display: flex;
+    flex-shrink: 0;
+}
+
+.fileList > a > div:nth-child(2) {
+    overflow-x: hidden;
+    flex-shrink: 1;
+}
+
+.fileList > a > div:nth-child(2) > p {
+    white-space: nowrap;
+}
+
+.fileList > a > div > * {
+    padding: 4px;
 }
 
 .aboutussection {
@@ -332,4 +366,14 @@ ol.fileDisplay > li * {
 .aboutussection img {
     width: 250px;
     height: 250px;
+}
+
+form {
+    width: 100%;
+}
+
+.icon {
+    width: 16px;
+    height: 16px;
+    border-radius: 0px;
 }
