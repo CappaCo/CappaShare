@@ -4,7 +4,7 @@
         <meta name="description" content="The CappaShare website made by Casper, Sam and Noah.">
         <style>
             #hero {
-                padding: 200px 0;
+                padding: 125px 0;
             }
         </style>
     <!-- head.html END -->
@@ -13,20 +13,47 @@
 
         <div id="hero">
             <h1>CappaShare</h1>
-            <h2>Upload and download files (maybe)</h2>
-        </div>       
-
-        <h2>We allow people to upload and download files</h2>
-        <div class="evil flex">
-            <a class="button secondary" href="/upload">Upload</a>
-            <a class="button" href="/download">Download</a> 
+            <h2>Upload and download files</h2>
+            <br>
+            <input class="box" type="text" id="title"  name="search" placeholder="What are you looking for? (WIP)" size="4" style="margin: 20px;">
         </div>
-
-        <h2>Most recent files</h2>
-        <ol class="fileDisplay">
-            <li><p>Title</p><p>Description</p></li>
-        </ol>
         
+        <main id="main">
+            <h2>We allow people to upload and download files</h2>
+            <div class="evil flex">
+                <a class="button secondary" href="/upload">Upload</a>
+                <a class="button" href="/download">Download</a> 
+            </div>
+
+            <h2>Most recent files</h2>
+            <div class="fileList">
+                <a href="product.html">
+                    <div>
+                        <p><img src="/images/tick.png" class="icon"></p>
+                        <p>Huge Question.jpg</p>
+                    </div>
+                    <div>
+                        <p>The most important question of the century for real raaaaaaaaaaaaaaaaaaaaah</p>
+                    </div>
+                    <div>
+                        <p>#money #question #image</p>
+                    </div>
+                </a>
+
+                <a href="product2.html">
+                    <div>
+                        <p><img src="/images/tick.png" class="icon"></p>
+                        <p>OMG.jpg</p>
+                    </div>
+                    <div>
+                        <p>The perfect reaction image</p>
+                    </div>
+                    <div>
+                        <p>#reaction #crazy #image</p>
+                    </div>
+                </a>
+            </div>
+        </main>
         <!-- footer.html HERE -->
     </body>
 </html>
