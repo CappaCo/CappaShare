@@ -5,8 +5,6 @@ let prevScrollpos = 0;
 let offset = 0;
 const nav = document.getElementsByTagName("nav")[0];
 
-let funny = false;
-
 function styleTop(num) {
     nav.style.top = num + "px";
 }

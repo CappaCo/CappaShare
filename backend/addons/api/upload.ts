@@ -1,6 +1,7 @@
 console.log("upload.ts loaded");
 
 export const path = "/upload";
+const MB = 1000000;
 
 export async function run(req: Request): Promise<Response> {
     console.log("file upload incoming");
@@ -33,11 +34,12 @@ async function handleFileUpload(data: FormData) {
         return;
     }
 
-    if (file.size > 100000) {
+    if (file.size > 1 * MB) {
         console.log("File too big");
         return;
     }
 
+    console.log("type:" + file.type);
     console.log(file);
     const fileFr = new Uint8Array(await file.arrayBuffer());
     await Deno.writeFile(`./backend/uploads/${file.name}`, fileFr);
