@@ -28,3 +28,9 @@ globalThis.onscroll = function() {
 }
 
 const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
+
+const evilThings = document.getElementsByClassName("evilDownload");
+
+evilThings.forEach(evilElement => {
+    console.log("Sam is evil: " + evilElement);
+});

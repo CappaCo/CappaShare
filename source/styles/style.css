@@ -307,7 +307,7 @@ textarea {
 }
 
 /* evil flex box */
-.evil.flex > * {
+.evilflex > * {
     margin: 10px;
 }
 
@@ -376,4 +376,8 @@ form {
     width: 16px;
     height: 16px;
     border-radius: 0px;
+}
+
+.evilDownload {
+    
 }
