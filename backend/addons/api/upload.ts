@@ -35,17 +35,17 @@ export async function run(req: Request): Promise<Response> {
         console.log("File too big");
         return new Response("bad", { status: 400 });
     }
+    
     await handleFileUpload(file);
     console.groupEnd();
     console.log("---------------------------------");
 
-    return new Response("<a href=\"/upload\">Back to upload</a><br><p>Hooray!</p>", { headers: { "Content-Type": "text/html" }});
+    return new Response(JSON.stringify({
+        message: "hooray"
+    }));
 }
 
 async function handleFileUpload(file: File) {
-    
-
-    //console.log("type:" + file.type);
     console.log(file);
     const fileFr = new Uint8Array(await file.arrayBuffer());
     await Deno.writeFile(`./backend/uploads/${file.name}`, fileFr);

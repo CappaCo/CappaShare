@@ -31,6 +31,11 @@ const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
 const evilThings = document.getElementsByClassName("evilDownload");
 
-evilThings.forEach(evilElement => {
-    console.log("Sam is evil: " + evilElement);
-});
+if (evilThings.length > 0) activateEvil();
+
+function activateEvil() {
+    for (const evilThing of evilThings) {
+        console.log("Sam is evil: " + evilThing);
+        console.log(evilThing);
+    };
+}
