@@ -32,7 +32,7 @@ export async function run(req: Request): Promise<Response> {
     console.log("File title: " + title);
     console.log("File description: " + description);
     
-    await handleFileUpload(file);
+    handleFileUpload(file);
     console.groupEnd();
     console.log("---------------------------------");
 
@@ -41,10 +41,11 @@ export async function run(req: Request): Promise<Response> {
     }));
 }
 
-async function handleFileUpload(file: File) {
+function handleFileUpload(file: File) {
     console.log(file);
-    const fileFr = new Uint8Array(await file.arrayBuffer());
-    await Deno.writeFile(`./backend/uploads/${file.name}`, fileFr);
+    //const fileFr = new Uint8Array(await file.arrayBuffer());
+    console.log("Pretend I uploaded the file to the server");
+    //await Deno.writeFile(`./backend/uploads/${file.name}`, fileFr);
 }
 
 interface fileUploadFormdata {
