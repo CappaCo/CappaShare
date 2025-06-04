@@ -5,8 +5,6 @@ let prevScrollpos = 0;
 let offset = 0;
 const nav = document.getElementsByTagName("nav")[0];
 
-let funny = false;
-
 function styleTop(num) {
     nav.style.top = num + "px";
 }
@@ -30,3 +28,14 @@ globalThis.onscroll = function() {
 }
 
 const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
+
+const evilThings = document.getElementsByClassName("evilDownload");
+
+if (evilThings.length > 0) activateEvil();
+
+function activateEvil() {
+    for (const evilThing of evilThings) {
+        console.log("Sam is evil: " + evilThing);
+        console.log(evilThing);
+    };
+}

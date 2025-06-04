@@ -299,7 +299,7 @@ textarea {
 }
 
 .big-text {
-    font-size: 2em;
+    font-size: 1.5em;
 }
 
 .boxevil img {
@@ -307,7 +307,7 @@ textarea {
 }
 
 /* evil flex box */
-.evil.flex > * {
+.evilflex > * {
     margin: 10px;
 }
 
@@ -315,6 +315,7 @@ textarea {
 .fileList {
     display: flex;
     flex-direction: column;
+    max-width: 100%;
 }
 
 .fileList > a {
@@ -376,4 +377,24 @@ form {
     width: 16px;
     height: 16px;
     border-radius: 0px;
+}
+
+.evilDownload {
+    
+}
+
+/* samEvilBar 🥀 */
+
+#samEvilProgress {
+  width: 100%;
+  background-color: grey;
+  justify-content: left;
+  display: flex;
+}
+
+#samEvilBar {
+  width: 0%;
+  height: 30px;
+  border-radius: 0;
+  margin: 0;
 }

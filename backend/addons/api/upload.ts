@@ -1,6 +1,7 @@
 console.log("upload.ts loaded");
 
 export const path = "/upload";
+const MB = 1000000;
 
 export async function run(req: Request): Promise<Response> {
     console.log("file upload incoming");
@@ -8,18 +9,83 @@ export async function run(req: Request): Promise<Response> {
     
     if (method != "POST") return new Response("method not allowed", { status: 405 });
 
-    handleFileUpload(await req.formData());
+    // TODO: async
+    console.log("getting formdata");
+    const formData = await req.formData();
+    console.log("got formdata");
 
-    return new Response("<a href=\"/upload\">Back to upload</a><br><p>Hooray!</p>", { headers: { "Content-Type": "text/html" }});
+    if (!checkFormdata(formData)) return new Response("formData not found", { status: 400 });
+
+    console.log("---------------------------------");
+    console.group();
+
+    const checkResponse = checkFormdata(formData);
+    if (checkResponse != "ok") {
+        console.error("File upload failed: " + checkResponse);
+        return new Response(checkResponse);
+    }
+
+    const data = getFormdata(formData);
+
+    const { title, description, file } = data;
+
+    console.log("File title: " + title);
+    console.log("File description: " + description);
+    
+    handleFileUpload(file);
+    console.groupEnd();
+    console.log("---------------------------------");
+
+    return new Response(JSON.stringify({
+        message: "hooray"
+    }));
 }
 
-function handleFileUpload(data: FormData) {
-    const file = data.get("file");
-
-    console.log("---------------------------------");
-    console.log(data);
-    console.log("title: " + data.get("title"));
-    console.log("description: " + data.get("description"));
+function handleFileUpload(file: File) {
     console.log(file);
-    console.log("---------------------------------");
+    //const fileFr = new Uint8Array(await file.arrayBuffer());
+    console.log("Pretend I uploaded the file to the server");
+    //await Deno.writeFile(`./backend/uploads/${file.name}`, fileFr);
+}
+
+interface fileUploadFormdata {
+    title: string;
+    description: string;
+    file: File;
+}
+
+function checkFormdata(formData: FormData): string {
+    const entries = formData.entries();
+    
+    const file = formData.get("file");
+    if (file instanceof File) {
+        console.log("Samuel Morresey");
+    } else {
+        return "file was not a file";
+    }
+    return "ok";
+}
+
+function getFormdata(formData: FormData): fileUploadFormdata {
+    const file = formData.get("file");
+
+    if (file instanceof File) {
+        console.log("Samuel Morresey");
+    } else {
+        throw new Error("File was not a file, did you check the form data first?")
+    }
+
+    return {
+        "title": formData.get("title") as string,
+        "description": formData.get("description") as string,
+        "file": file,
+    }
+}
+
+function checkFile(file: File): string {
+    if (file.size > 10 * MB) {
+        return "File too big";
+    }
+
+    return "ok";
 }

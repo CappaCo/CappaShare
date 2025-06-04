@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!-- head.html START -->
+        <meta name="description" content="The CappaShare website made by Casper, Sam and Noah. (Testing page)">
+    <!-- head.html END -->
+    <body>
+        <!-- nav.html HERE -->
+
+        <div id="hero">
+            <h1>CappaShare</h1>
+            <h2>I have a cool slogan</h2>
+        </div>       
+        
+        <main id="main">
+            <div id="samEvilProgress">
+                <img id="samEvilBar" src="/images/biden.jpg">
+            </div>
+            <br>
+            <button onclick="move()">Load my thing</button>
+            <button onclick="width = 0; stopLoading();">Reset</button> 
+            <script>
+                const elem = document.getElementById("samEvilBar");
+                
+                let i = 0;
+                let width = 0;
+                let velocity = 0;
+                let id;
+
+                function frame() {
+                    if (width < 100) {
+                        velocity += (Math.random() - 0.1)/10;
+                        velocity = clamp(velocity*0.8, -1, 1);
+                        width += velocity;
+                        width = clamp(width, 0, 100);
+                        updateProgress();
+                    } else {
+                        stopLoading();
+                    }
+                }
+                
+                function move() {
+                    if (i == 0) {
+                        i = 1;
+                        id = setInterval(frame, 10);
+                    }
+                }
+
+                function stopLoading() {
+                    clearInterval(id);
+                    i = 0;
+                    velocity = 0;
+                    updateProgress();
+                    alert("Huzzah!");
+                }
+
+                function updateProgress() {
+                    elem.style.width = width + "%";
+                }
+            </script>
+        </main>
+
+        <!-- Casper:  -->
+        <!-- Ham: Imma be silly hold on  -->
+        <!-- footer.html HERE -->
+    </body>
+</html>
