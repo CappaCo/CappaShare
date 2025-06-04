@@ -1,10 +1,11 @@
-console.log("Samuel Morresey");
+console.log("uploadForm.js running");
 
 const form = document.getElementById("uploadForm");
 
 form.addEventListener("submit", uploadForm);
 
 let fileSize = 0;
+const MB = 1000000;
 
 function uploadForm(event) {
     event.preventDefault();
@@ -16,6 +17,12 @@ function uploadForm(event) {
     fileSize = document.getElementById("file").files[0].size;
     console.log("fileSize: " + fileSize);
 
+    if (fileSize > 10*MB) {
+        console.log("File too big");
+        alert("File too big");
+        return;
+    }
+
     request.upload.addEventListener("progress", uploadProgress);
 
     request.open("post", "/api/upload");
@@ -26,7 +33,6 @@ function uploadForm(event) {
 }
 
 function uploadProgress(e) {
-    console.log(e.loaded);
     if (e.loaded <= fileSize) {
         const percent = e.loaded / fileSize * 100;
         console.log("Percent uploaded: " + percent);
