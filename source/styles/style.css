@@ -315,6 +315,7 @@ textarea {
 .fileList {
     display: flex;
     flex-direction: column;
+    max-width: 100%;
 }
 
 .fileList > a {
@@ -380,4 +381,20 @@ form {
 
 .evilDownload {
     
+}
+
+/* samEvilBar 🥀 */
+
+#samEvilProgress {
+  width: 100%;
+  background-color: grey;
+  justify-content: left;
+  display: flex;
+}
+
+#samEvilBar {
+  width: 0%;
+  height: 30px;
+  border-radius: 0;
+  margin: 0;
 }
