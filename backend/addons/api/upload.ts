@@ -21,8 +21,8 @@ export async function run(req: Request): Promise<Response> {
 
     const checkResponse = checkFormdata(formData);
     if (checkResponse != "ok") {
-        console.error("File upload failed: " + checkResponse);
-        return new Response(checkResponse);
+        console.error("Form checks failed: " + checkResponse);
+        return new Response(checkResponse, { status: 400 });
     }
 
     const data = getFormdata(formData);
@@ -31,6 +31,12 @@ export async function run(req: Request): Promise<Response> {
 
     console.log("File title: " + title);
     console.log("File description: " + description);
+
+    const fileCheckResponse = checkFile(file);
+    if (fileCheckResponse != "ok") {
+        console.error("File checks failed: " + fileCheckResponse);
+        return new Response(fileCheckResponse, { status: 400 });
+    }
     
     handleFileUpload(file);
     console.groupEnd();
@@ -56,6 +62,12 @@ interface fileUploadFormdata {
 
 function checkFormdata(formData: FormData): string {
     const entries = formData.entries();
+
+    // TODO: Validate form data entries
+
+    // [...entries].forEach((entry) => {
+    //     console.log("FormDataEntry: " + entry);
+    // });
     
     const file = formData.get("file");
     if (file instanceof File) {
@@ -63,6 +75,7 @@ function checkFormdata(formData: FormData): string {
     } else {
         return "file was not a file";
     }
+
     return "ok";
 }
 
