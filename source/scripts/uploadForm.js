@@ -14,7 +14,14 @@ function uploadForm(event) {
 
     const request = new XMLHttpRequest();
 
-    fileSize = document.getElementById("file").files[0].size;
+    const file = document.getElementById("file").files[0];
+
+    if (!file) {
+        alert("No file selected");
+        return;
+    }
+
+    fileSize = file.size;
     console.log("fileSize: " + fileSize);
 
     if (fileSize > 10*MB) {
