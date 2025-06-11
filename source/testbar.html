@@ -12,14 +12,16 @@
         </div>       
         
         <main id="main">
-            <div id="samEvilProgress">
-                <img alt="A gif of someone doing a Money spread" id="samEvilBar" src="/images/freaky-money.gif">
+            <div class="samEvilProgress">
+                <div class="samEvilBar"><p>0%</p></div>
             </div>
             <br>
             <button onclick="move()">Load my thing</button>
-            <button onclick="width = 0; stopLoading();">Reset</button> 
+            <button onclick="width = 0; stopLoading();">Reset</button>
             <script>
-                const elem = document.getElementById("samEvilBar");
+                const container = document.getElementsByClassName("samEvilProgress")[0];
+                const elem = container.getElementsByClassName("samEvilBar")[0];
+                const text = elem.getElementsByTagName("p")[0];
                 
                 let i = 0;
                 let width = 0;
@@ -55,6 +57,7 @@
 
                 function updateProgress() {
                     elem.style.width = width + "%";
+                    text.innerText = Math.round(width) + "%";
                 }
             </script>
         </main>

@@ -385,16 +385,19 @@ form {
 
 /* samEvilBar 🥀 */
 
-#samEvilProgress {
-  width: 100%;
-  background-color: grey;
-  justify-content: left;
-  display: flex;
+.samEvilProgress {
+    width: 100%;
+    justify-content: left;
+    display: flex;
 }
 
-#samEvilBar {
-  width: 0%;
-  height: 30px;
-  border-radius: 0;
-  margin: 0;
+.samEvilBar {
+    width: 0%;
+    height: 30px;
+    border-radius: 0;
+    margin: 0;
+    /*background-color: grey;*/
+    background-image: url("/images/freaky-money.gif");
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
 }
