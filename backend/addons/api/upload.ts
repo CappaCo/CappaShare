@@ -60,15 +60,18 @@ interface fileUploadFormdata {
     file: File;
 }
 
+const checkStringTypes = ["title", "description"];
+
 function checkFormdata(formData: FormData): string {
+    console.log("Checking formData");
     const entries = formData.entries();
 
     // TODO: Validate form data entries
 
-    // [...entries].forEach((entry) => {
-    //     console.log("FormDataEntry: " + entry);
-    // });
-    
+    [...entries].forEach((entry) => {
+        console.log(entry[0] + ": " + entry[1]);
+    });
+
     const file = formData.get("file");
     if (file instanceof File) {
         console.log("Samuel Morresey");
@@ -76,7 +79,7 @@ function checkFormdata(formData: FormData): string {
         return "file was not a file";
     }
 
-    return "ok";
+    return "ok"; 
 }
 
 function getFormdata(formData: FormData): fileUploadFormdata {
