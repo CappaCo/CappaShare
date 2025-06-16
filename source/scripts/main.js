@@ -3,6 +3,7 @@ console.log("Main is running at " + document.URL);
 // evil sam navbar code (modified)
 let prevScrollpos = 0;
 let offset = 0;
+let funny = false;
 const nav = document.getElementsByTagName("nav")[0];
 
 function styleTop(num) {
