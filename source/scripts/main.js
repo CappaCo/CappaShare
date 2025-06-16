@@ -3,7 +3,7 @@ console.log("Main is running at " + document.URL);
 // evil sam navbar code (modified)
 let prevScrollpos = 0;
 let offset = 0;
-let funny = false;
+const funny = false;
 const nav = document.getElementsByTagName("nav")[0];
 
 function styleTop(num) {
@@ -11,7 +11,7 @@ function styleTop(num) {
 }
 
 // Keep code in here to a minimum because it is run often, we don't want the client to lag when scrolling
-globalThis.onscroll = function() {
+document.onscroll = function onscroll() {
     const currentScrollPos = globalThis.pageYOffset;
 
     if (currentScrollPos < 100) {
