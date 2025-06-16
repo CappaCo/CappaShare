@@ -60,7 +60,7 @@ interface fileUploadFormdata {
     file: File;
 }
 
-const checkStringTypes = ["title", "description"];
+const requiredFormDataValues = ["title", "description"];
 
 function checkFormdata(formData: FormData): string {
     console.log("Checking formData");
@@ -68,8 +68,8 @@ function checkFormdata(formData: FormData): string {
 
     // TODO: Validate form data entries
 
-    [...entries].forEach((entry) => {
-        console.log(entry[0] + ": " + entry[1]);
+    requiredFormDataValues.forEach((value) => {
+        
     });
 
     const file = formData.get("file");
@@ -80,6 +80,18 @@ function checkFormdata(formData: FormData): string {
     }
 
     return "ok"; 
+}
+
+function checkFormdataEntry(entry: [string, FormDataEntryValue]): boolean {
+    if (!requiredFormDataValues.includes(entry[0])) {
+        return false;
+    }
+
+    if (typeof entry[0] == "string") {
+        return false;
+    }
+
+    return true;
 }
 
 function getFormdata(formData: FormData): fileUploadFormdata {
