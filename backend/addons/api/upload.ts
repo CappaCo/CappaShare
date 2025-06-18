@@ -14,7 +14,8 @@ export async function run(req: Request): Promise<Response> {
     const formData = await req.formData();
     console.log("got formdata");
 
-    if (!checkFormdata(formData)) return new Response("formData not found", { status: 400 });
+    const FormCheckResponse = checkFormdata(formData);
+    if (FormCheckResponse != "ok") return new Response("bad form: " + FormCheckResponse, { status: 400 });
 
     console.log("---------------------------------");
     console.group();
@@ -60,16 +61,23 @@ interface fileUploadFormdata {
     file: File;
 }
 
-const requiredFormDataValues = ["title", "description"];
+const requiredFormDataValues = ["title", "description", "file"];
 
 function checkFormdata(formData: FormData): string {
     console.log("Checking formData");
-    const entries = formData.entries();
+    const data = Object.fromEntries(formData.entries());
+    const keys = Object.keys(data);
 
     // TODO: Validate form data entries
 
     requiredFormDataValues.forEach((value) => {
-        
+        if (!keys.includes(value)) {
+            return "required key not found";
+        }
+
+        if (data[value] == "") {
+            return "value was empty";
+        }
     });
 
     const file = formData.get("file");
@@ -82,23 +90,11 @@ function checkFormdata(formData: FormData): string {
     return "ok"; 
 }
 
-function checkFormdataEntry(entry: [string, FormDataEntryValue]): boolean {
-    if (!requiredFormDataValues.includes(entry[0])) {
-        return false;
-    }
-
-    if (typeof entry[0] == "string") {
-        return false;
-    }
-
-    return true;
-}
-
 function getFormdata(formData: FormData): fileUploadFormdata {
     const file = formData.get("file");
 
     if (file instanceof File) {
-        console.log("Samuel Morresey");
+        console.log("The file is a file");
     } else {
         throw new Error("File was not a file, did you check the form data first?")
     }
