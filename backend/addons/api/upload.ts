@@ -61,16 +61,14 @@ interface fileUploadFormdata {
     file: File;
 }
 
-const requiredFormDataValues = ["title", "description", "file"];
+const requiredFormData = ["title", "description", "file"];
 
 function checkFormdata(formData: FormData): string {
     console.log("Checking formData");
     const data = Object.fromEntries(formData.entries());
     const keys = Object.keys(data);
 
-    // TODO: Validate form data entries
-
-    requiredFormDataValues.forEach((value) => {
+    requiredFormData.forEach((value) => {
         if (!keys.includes(value)) {
             return "required key not found";
         }
@@ -81,11 +79,7 @@ function checkFormdata(formData: FormData): string {
     });
 
     const file = formData.get("file");
-    if (file instanceof File) {
-        console.log("Samuel Morresey");
-    } else {
-        return "file was not a file";
-    }
+    if (file !instanceof File) return "file was not a file";
 
     return "ok"; 
 }
@@ -96,7 +90,7 @@ function getFormdata(formData: FormData): fileUploadFormdata {
     if (file instanceof File) {
         console.log("The file is a file");
     } else {
-        throw new Error("File was not a file, did you check the form data first?")
+        throw new Error("File was not a file, did you check the form data first?");
     }
 
     return {
