@@ -1,7 +1,12 @@
+import 'https://deno.land/x/dotenv@v3.2.2/load.ts';
+import { client } from "../../database.ts";
+
 console.log("upload.ts loaded");
 
 export const path = "/upload";
 const MB = 1000000;
+
+
 
 export async function run(req: Request): Promise<Response> {
     console.log("file upload incoming");
