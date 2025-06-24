@@ -17,6 +17,8 @@
   },
   "redirects": {
     "https://deno.land/x/": "https://deno.land/x",
+    "https://deno.land/x/dotenv": "https://deno.land/x/dotenv@v3.2.2",
+    "https://deno.land/x/dotenv/load.ts": "https://deno.land/x/dotenv@v3.2.2/load.ts",
     "https://deno.land/x/mimetypes": "https://deno.land/x/mimetypes@v1.0.0",
     "https://deno.land/x/mimetypes/mod.ts": "https://deno.land/x/mimetypes@v1.0.0/mod.ts",
     "https://deno.land/x/mysql/mod.ts": "https://deno.land/x/mysql@v2.12.1/mod.ts"
