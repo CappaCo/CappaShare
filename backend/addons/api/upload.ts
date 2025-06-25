@@ -49,6 +49,7 @@ export async function run(req: Request): Promise<Response> {
         return new Response(fileCheckResponse, { status: 400 });
     }
     
+    handleFormDataUpload(data);
     handleFileUpload(file);
     console.groupEnd();
     console.log("---------------------------------");
@@ -58,6 +59,10 @@ export async function run(req: Request): Promise<Response> {
     }));
 }
 
+function handleFormDataUpload(data: FileUploadFormData) {
+    console.log("Uploading form data to database");
+}
+
 function handleFileUpload(file: File) {
     console.log(file);
     //const fileFr = new Uint8Array(await file.arrayBuffer());
@@ -65,7 +70,7 @@ function handleFileUpload(file: File) {
     //await Deno.writeFile(`./backend/uploads/${file.name}`, fileFr);
 }
 
-interface fileUploadFormdata {
+interface FileUploadFormData {
     title: string;
     description: string;
     file: File;
@@ -94,7 +99,7 @@ function checkFormdata(formData: FormData): string {
     return "ok"; 
 }
 
-function getFormdata(formData: FormData): fileUploadFormdata {
+function getFormdata(formData: FormData): FileUploadFormData {
     const file = formData.get("file");
 
     if (file instanceof File) {
