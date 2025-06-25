@@ -1,12 +1,20 @@
-import 'https://deno.land/x/dotenv@v3.2.2/load.ts';
 import { client } from "../../database.ts";
+import 'https://deno.land/x/dotenv@v3.2.2/load.ts';
 
 console.log("upload.ts loaded");
 
 export const path = "/upload";
 const MB = 1000000;
 
+console.log("Client: " + client);
+console.log("Trying to test sql")
 
+try {
+    console.log(await client.execute("SELECT 1"));
+    console.log("SQL test passed");
+} catch {
+    console.error("SQL test failed");
+}
 
 export async function run(req: Request): Promise<Response> {
     console.log("file upload incoming");
@@ -18,9 +26,6 @@ export async function run(req: Request): Promise<Response> {
     console.log("getting formdata");
     const formData = await req.formData();
     console.log("got formdata");
-
-    const FormCheckResponse = checkFormdata(formData);
-    if (FormCheckResponse != "ok") return new Response("bad form: " + FormCheckResponse, { status: 400 });
 
     console.log("---------------------------------");
     console.group();
