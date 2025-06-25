@@ -17,4 +17,4 @@ RUN deno run --allow-read --allow-write backend/build.ts
 
 EXPOSE 8000
 
-CMD ["run", "--allow-net", "--allow-read", "--allow-write", "backend/app.ts"]
+CMD ["run", "--allow-net", "--allow-read", "--allow-write", "--allow-env", "backend/app.ts"]
