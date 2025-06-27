@@ -9,13 +9,6 @@ const MB = 1000000;
 console.log("Client: " + client);
 console.log("Trying to test sql")
 
-try {
-    console.log(await client.execute("SELECT 1"));
-    console.log("SQL test passed");
-} catch {
-    console.error("SQL test failed");
-}
-
 export async function run(req: Request): Promise<Response> {
     console.log("file upload incoming");
     const method = req.method;

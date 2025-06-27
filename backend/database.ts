@@ -3,11 +3,11 @@ import 'https://deno.land/x/dotenv@v3.2.2/load.ts';
 
 console.log("database.ts");
 
-const domain   = Deno.env.get("MYSQLDOMAIN")   || "localhost";
-const port     = Deno.env.get("MYSQLPORT")     || "3306";
-const dbname   = Deno.env.get("MYSQLDATABASE") || "myDatabase";
-const user     = Deno.env.get("MYSQLUSER")     || "root";
-const password = Deno.env.get("MYSQLPASSWORD") || "changeme";
+const domain   = Deno.env.get("MYSQLDOMAIN")       || "localhost";
+const dbname   = Deno.env.get("MYSQLDATABASE")     || "myDatabase";
+const user     = Deno.env.get("MYSQLUSER")         || "root";
+const password = Deno.env.get("MYSQLPASSWORD")     || "changeme";
+const port     = Number(Deno.env.get("MYSQLPORT")) || 3306;
 
 console.log("domain: " + domain);
 console.log("port: " + port);
@@ -15,12 +15,15 @@ console.log("dbname: " + dbname);
 console.log("user: " + user);
 console.log("password: " + /*password*/ "I'm not printing the password");
 
-const fullHostname = (port === "3306") ? domain : `${domain}:${port}`;
+//const fullHostname = (port === 3306) ? domain : `${domain}:${port}`;
 
 export const client = await new Client().connect({
-    hostname: fullHostname,
-    db: dbname,
+    hostname: domain,
+    port: port,
     username: user,
     password: password,
+    db: dbname,
 });
 
+// this test fails
+//console.log(await client.execute("SELECT 1"));
