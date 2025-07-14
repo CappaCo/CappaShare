@@ -7,7 +7,7 @@ export const path = "/upload";
 const MB = 1000000;
 
 console.log("Client: " + client);
-console.log("Trying to test sql")
+console.log("Trying to test sql");
 
 export async function run(req: Request): Promise<Response> {
     console.log("file upload incoming");
