@@ -28,12 +28,6 @@ export const client = await new Client().connect({
 // this test fails
 try {
     console.log(await client.execute("SELECT 1"));
-<<<<<<< HEAD
-} catch {
-    console.log("test failed fr")
-}
-=======
 } catch (error) {
     console.error("SQL test failed:\n" + error);
 }
->>>>>>> 63639eb74e691f68784a387802ef5ab3dcf08e58
