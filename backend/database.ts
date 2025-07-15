@@ -84,7 +84,9 @@ async function runTests() {
 }
 // end
 
-// --- Tests (only run when the file is executed directly) ---
 if (import.meta.main) {
-    runTests(); // The call to runTests remains inside the import.meta.main block
+    runTests();
 }
+
+// deno-lint-ignore no-explicit-any
+export type Result = Array<Record<any, any>>;

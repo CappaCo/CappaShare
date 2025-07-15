@@ -1,4 +1,4 @@
-import { getDbClient } from "../../database.ts";
+import { getDbClient, Result } from "../../database.ts";
 import 'https://deno.land/x/dotenv@v3.2.2/load.ts';
 
 console.log("upload.ts loaded");
@@ -10,6 +10,14 @@ const client = await getDbClient();
 
 console.log("Client: " + client);
 console.log("Trying to test sql");
+
+const result: Result = await client.query("SELECT * FROM test");
+console.log("\nresult:");
+console.log(result);
+console.log("first line:");
+console.log(result[0]);
+console.log("id of first row:");
+console.log(result[0].id);
 
 export async function run(req: Request): Promise<Response> {
     console.log("file upload incoming");
