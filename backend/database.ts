@@ -56,19 +56,24 @@ async function runTests() {
     try {
         client = await getDbClient();
 
-        // Test 1: Get current time
-        const [resultNow] = await client.query("SELECT NOW() as currentTime;");
-        console.log("Current time from database:", resultNow[0].currentTime);
+        // Single Test: Get current time
+        // Do NOT use array destructuring initially. Get the raw result.
+        const result = await client.query("SELECT NOW() as currentTime;");
 
-        // Test 2: Simple SQL test
-        console.log("\n--- Running additional SQL test ---");
-        const [resultOne] = await client.query("SELECT 1 AS test_value;");
-        console.log("SQL test passed:", resultOne[0].test_value);
-        console.log("--- SQL test complete ---\n");
+        console.log("Debug: Raw query result content:", result); // Crucial for debugging
 
-        // Example: You can now perform other database operations
-        // const users = await client.query("SELECT * FROM users;");
-        // console.log("Users:", users);
+        // Check if it's an array and has elements (common for multi-row results)
+        if (Array.isArray(result) && result.length > 0) {
+            console.log("Current time from database:", result[0].currentTime);
+        }
+        // Else, check if it's a direct object with the property (common for single-row results like NOW())
+        else if (typeof result === 'object' && result !== null && 'currentTime' in result) {
+            console.log("Current time from database:", result.currentTime);
+        } else {
+            console.error("Error: SELECT NOW() did not return expected data.");
+            console.error("Debug: Result variable content:", result);
+            throw new Error("Failed to get current time from database: Unexpected query result format.");
+        }
 
     } catch (error) {
         console.error("Error during database operation:", error);
@@ -77,6 +82,7 @@ async function runTests() {
         await closeDbClient();
     }
 }
+// end
 
 // --- Tests (only run when the file is executed directly) ---
 if (import.meta.main) {
