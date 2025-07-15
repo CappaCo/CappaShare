@@ -3,3 +3,4 @@ build/
 Thumbs.db
 backend/uploads
 *.env
+test.ts

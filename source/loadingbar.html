@@ -12,25 +12,49 @@
         </div>       
         
         <main id="main">
+            <script src="https://cdn.jsdelivr.net/npm/p5@1.11.2/lib/p5.min.js"></script>
             <script>
                 var x1=52.5
-                var y1=182.5
-                var width1=0
-                var height1=35
+                    var y1=92.5
+                    var width1=0
+                    var height1=35
+                    var size = 1
 
-                function setup() {
-                createCanvas(400, 400);
-                }
+                    function setup() {
+                    createCanvas(400, 200);
+                    }
 
-                function draw() {
-                background(220);
-                fill(0);
-                stroke(255);
-                rect(50, 180, 300, 40, 20);
-                fill(255);
-                rect(x1, y1, width1, height1, 20);
-                width1++
-                }
+                    function draw() {
+                    background(220);
+                    fill(0);
+                    stroke(255);
+                    rect(50, 90, 300, 40, 20);
+                    fill(255);
+                    rect(x1, y1, width1, height1, 20);
+                    if (width1 < 295) {
+                        width1++
+                    }  
+                    if (width1 > 294) {
+                        push();
+                        fill(255, 0, 0);
+                        translate(width * 0.5, height * 0.5);
+                        rotate(frameCount / -100.0);
+                        polygon(0, 0, size, 7);
+                        pop();
+                        size++
+                    }
+                    function polygon(x, y, radius, npoints) {
+                    let angle = TWO_PI / npoints;
+                    beginShape();
+                    for (let a = 0; a < TWO_PI; a += angle) {
+                        let sx = x + cos(a) * radius;
+                        let sy = y + sin(a) * radius;
+                        vertex(sx, sy);
+                    }
+                    endShape(CLOSE);
+                    }
+                    }
+  
             </script>
         </main>
         
