@@ -1,10 +1,12 @@
-import { client } from "../../database.ts";
+import { getDbClient } from "../../database.ts";
 import 'https://deno.land/x/dotenv@v3.2.2/load.ts';
 
 console.log("upload.ts loaded");
 
 export const path = "/upload";
 const MB = 1000000;
+
+const client = await getDbClient();
 
 console.log("Client: " + client);
 console.log("Trying to test sql");
