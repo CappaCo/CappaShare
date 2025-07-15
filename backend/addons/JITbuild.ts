@@ -6,7 +6,6 @@ const decoder = new TextDecoder("utf-8");
 const encoder = new TextEncoder();
 
 export async function run(fileName: string): Promise<ReadableStream> {
-    console.log("cwd: " + Deno.cwd());
     console.log(`Building ${fileName} JIT`);
     const file = await Deno.readFile("./source" + fileName);
     let fileString = decoder.decode(file);

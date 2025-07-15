@@ -11,6 +11,8 @@ const websitePath = "./build/";
 const sourcePath = "./source/";
 const buildJIT = Deno.args[0] == "dev";
 
+if (buildJIT) console.log("Running in dev mode so building is dynamic");
+
 // Function to load all of the addons
 async function loadAddons() {
     const dirContents = Deno.readDir("./backend/");
@@ -22,7 +24,7 @@ async function loadAddons() {
     }
 
     if (!addonsEnabled) {
-        console.log("addons folder not found");
+        console.error("addons folder not found");
         return;
     }
 
@@ -32,7 +34,7 @@ async function loadAddons() {
         const realPath = addonsFile.path.replaceAll("\\", "/").split("/").slice(2).join("/");
         if (realPath == "") continue;
         if (addonsFile.isFile) {
-            console.log("making new addon: " + realPath);
+            //console.log("making new addon: " + realPath);
             addons.push(new Addon(realPath));
         }
     }
@@ -43,7 +45,7 @@ loadAddons();
 // This function returns the filepath of a file in the searchPath directory
 // It allows html pages to be found without the need to add .html in the URL
 async function getTheFile(filePath: string, searchPath: string): Promise<string> {
-    console.log("Getting the file: " + filePath);
+    //console.log("Getting the file: " + filePath);
     // Get all of the files in the searchPath directory
     const filePaths = [];
     for await (const walkEntry of walk(`./${searchPath}`)) {
@@ -82,7 +84,7 @@ async function websiteRequest(req: Request): Promise<Response> {
     // Get the file
     let resFileName = "404.html";
     resFileName = await getTheFile(reqFilePath, websitePath);
-    console.log("resFileName: " + resFileName);
+    //console.log("resFileName: " + resFileName);
 
     if (resFileName == "/404.html") console.log(`404: ${reqFilePath}`);
 
@@ -99,9 +101,10 @@ async function websiteRequest(req: Request): Promise<Response> {
     let readable;
 
     // Check addons for building the file JIT
-    console.log("Building file JIT: " + buildJIT);
+    //console.log("Building file JIT: " + buildJIT);
     if (addonsEnabled && buildJIT) {
-        console.log("Searching for build addon");
+        //console.log("Searching for build addon");
+        // TODO: memoisation
         for (const addon of addons) {
             if (addon.type != "build" || !resFileName.endsWith(".html")) continue;
             readable = await addon.run(resFileName);
@@ -120,7 +123,7 @@ async function handler(req: Request) {
     const reqURL = new URL(req.url);
     const reqPath = reqURL.pathname;
 
-    console.log("Request path: " + reqPath);
+    //console.log("Request path: " + reqPath);
 
     // Check addons for the request
     if (addonsEnabled) {

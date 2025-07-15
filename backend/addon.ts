@@ -11,7 +11,7 @@ export class Addon {
 
     async load() {
         const addonImport = await import("./addons/" + this.fileName);
-        console.log("filename: " + this.fileName);
+        //console.log("loading filename: " + this.fileName);
 
         this.checkRequirements(addonImport);
 
