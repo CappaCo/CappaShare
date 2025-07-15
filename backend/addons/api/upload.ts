@@ -54,7 +54,7 @@ export async function run(req: Request): Promise<Response> {
 
 function handleFormDataUpload(data: FileUploadFormData) {
     console.log("Uploading form data to database");
-    console.log("data");
+    console.log(data);
 }
 
 function handleFileUpload(file: File) {
