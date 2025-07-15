@@ -6,7 +6,6 @@ let clientPromise: Promise<Client> | undefined; // Changed to undefined for init
 export async function getDbClient(): Promise<Client> {
     if (!clientPromise) { // Check if the connection promise has already been initiated
         clientPromise = (async () => { // Assign the promise here, so subsequent calls await the same promise
-            const railwayInternalHost = Deno.env.get("RAILWAY_HOST");
             const connectionString = Deno.env.get("MYSQL"); // Retrieve connection string inside the async function
             if (!connectionString) {
                 throw new Error("MYSQL connection string not found in environment variables. Please set it in your .env file.");
@@ -14,7 +13,7 @@ export async function getDbClient(): Promise<Client> {
 
             // Parse the connection string to extract individual components
             const url = new URL(connectionString);
-            const hostname = railwayInternalHost || url.hostname;
+            const hostname = url.hostname;
             const port = parseInt(url.port);
             const username = url.username;
             const password = url.password;
