@@ -81,7 +81,6 @@ async function runTests() {
         await closeDbClient();
     }
 }
-// end
 
 if (import.meta.main) {
     runTests();

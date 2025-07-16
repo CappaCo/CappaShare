@@ -4,18 +4,24 @@ import 'https://deno.land/x/dotenv@v3.2.2/load.ts';
 export const path = "/upload";
 const MB = 1000000;
 
+console.log("making client");
 const client = await getDbClient();
+console.log("client made");
 
-console.log("Client: " + client);
-console.log("Trying to test sql");
+try {
+    console.log("Client: " + client);
+    console.log("Trying to test sql");
 
-const result: Result = await client.query("SELECT * FROM test");
-console.log("\nresult:");
-console.log(result);
-console.log("first line:");
-console.log(result[0]);
-console.log("id of first row:");
-console.log(result[0].id);
+    const result: Result = await client.query("SELECT * FROM test");
+    console.log("\nresult:");
+    console.log(result);
+    console.log("first line:");
+    console.log(result[0]);
+    console.log("id of first row:");
+    console.log(result[0].id);
+} catch (error) {
+    console.log("Error making sql client:\n" + error);
+}
 
 export async function run(req: Request): Promise<Response> {
     console.log("file upload incoming");
