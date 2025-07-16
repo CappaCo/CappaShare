@@ -22,6 +22,7 @@
 
                     function setup() {
                     createCanvas(400, 200);
+                    textSize(32);
                     }
 
                     function draw() {
@@ -41,7 +42,22 @@
                         rotate(frameCount / -100.0);
                         polygon(0, 0, size, 7);
                         pop();
+                        push();
+                        fill(255, 255, 0);
+                        translate(width * 0.5, height * 0.5);
+                        rotate(frameCount / -100.0);
+                        polygon(0, 0, size-50, 7);
+                        pop();
+                        push();
+                        fill(255, 150, 0);
+                        translate(width * 0.5, height * 0.5);
+                        rotate(frameCount / -100.0);
+                        polygon(0, 0, size-100, 7);
+                        pop();
                         size++
+                    }
+                    if (size >= 416) {
+                        text('Your file has been uploaded', 0, 100);
                     }
                     function polygon(x, y, radius, npoints) {
                     let angle = TWO_PI / npoints;
