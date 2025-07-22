@@ -12,7 +12,7 @@ try {
     console.log("Client: " + client);
     console.log("Trying to test sql");
 
-    const result: Result = await client.query("SELECT * FROM test");
+    const result: Result = await client.query("SELECT * FROM prod");
     console.log("\nresult:");
     console.log(result);
     console.log("first line:");
