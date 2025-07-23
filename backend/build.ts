@@ -156,7 +156,7 @@ async function buildAllFiles() {
         if (file.isFile) {
             // Only build html files
             console.log(realPath);
-            if (file.name.endsWith(".html")) {
+            if (checkFileNameForBuild(file.name)) {
                 await buildFile(realPath);
             } else {
                 await Deno.link(`./${sourcePath}/${realPath}`, `./${buildPath}/${realPath}`);
@@ -169,6 +169,12 @@ async function buildAllFiles() {
 
     // Generate sitemap using genSitemap.ts
     generateSitemap();
+}
+
+export function checkFileNameForBuild(filename: string) {
+    const goodEndings = [".html", ".js"];
+
+    return goodEndings.some(ending => filename.endsWith(ending));
 }
 
 // Check if we are running through console and build files

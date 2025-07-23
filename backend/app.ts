@@ -2,6 +2,7 @@ import { walk } from "https://deno.land/std@0.224.0/fs/walk.ts";
 import { mime } from "https://deno.land/x/mimetypes@v1.0.0/mod.ts";
 
 import { Addon } from "./addon.ts";
+import { checkFileNameForBuild } from "./build.ts";
 
 // TODO: Comment stuff
 
@@ -129,12 +130,6 @@ async function websiteRequest(req: Request): Promise<Response> {
 
     // Return the response with the status and the headers
     return new Response(readable, { status: resStatus, headers: headers });
-}
-
-function checkFileNameForBuild(filename: string) {
-    const goodEndings = [".html", ".js"];
-
-    return goodEndings.some(ending => filename.endsWith(ending));
 }
 
 function matchPath(addonPath: string, reqPath: string): boolean {

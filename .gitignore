@@ -1,5 +1,5 @@
 .vscode/
-build/
+build/*
 Thumbs.db
 backend/uploads
 *.env
