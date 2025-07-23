@@ -82,8 +82,22 @@ async function runTests() {
     }
 }
 
+async function makeConsole() {
+    let query;
+    let result;
+    const client = await getDbClient();
+
+    while (true) {
+        query = prompt("$$$");
+        if (!query) continue;
+        result = await client.query(query);
+        console.log(result);
+    }
+}
+
 if (import.meta.main) {
-    runTests();
+    await runTests();
+    //makeConsole();
 }
 
 // deno-lint-ignore no-explicit-any
