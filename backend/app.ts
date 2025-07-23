@@ -34,8 +34,9 @@ async function loadAddons() {
         const realPath = addonsFile.path.replaceAll("\\", "/").split("/").slice(2).join("/");
         if (realPath == "") continue;
         if (addonsFile.isFile) {
-            //console.log("making new addon: " + realPath);
-            addons.push(new Addon(realPath));
+            const addon = new Addon(realPath);
+            await addon.load();
+            addons.push(addon);
         }
     }
 }
@@ -68,8 +69,6 @@ async function getTheFile(filePath: string, searchPath: string): Promise<string>
     // If the file is found then return that file
     if (filePaths.includes(filePath)) return filePath;
 
-    if (searchPath == websitePath) return getTheFile(filePath, sourcePath);
-
     // If no files are found, return the 404 page
     return "/404.html";
 }
@@ -82,9 +81,19 @@ async function websiteRequest(req: Request): Promise<Response> {
     const reqFilePath = decodeURIComponent(reqPath);
 
     // Get the file
-    let resFileName = "404.html";
+    let resFileName;
+    let realPath;
     resFileName = await getTheFile(reqFilePath, websitePath);
+    if (resFileName == "/404.html") {
+        resFileName = await getTheFile(reqFilePath, sourcePath);
+        if (resFileName != "/404.html") {
+            realPath = sourcePath;
+        }
+    } else {
+        realPath = websitePath;
+    }
     //console.log("resFileName: " + resFileName);
+    //console.log("realPath:", realPath);
 
     if (resFileName == "/404.html") console.log(`404: ${reqFilePath}`);
 
@@ -98,23 +107,42 @@ async function websiteRequest(req: Request): Promise<Response> {
         "content-type": contentType || "text/plain",
     });
 
-    let readable;
+    let readable: ReadableStream<Uint8Array<ArrayBuffer>>;
 
     // Check addons for building the file JIT
     //console.log("Building file JIT: " + buildJIT);
     if (addonsEnabled && buildJIT) {
-        //console.log("Searching for build addon");
-        // TODO: memoisation
         for (const addon of addons) {
-            if (addon.type != "build" || !resFileName.endsWith(".html")) continue;
-            readable = await addon.run(resFileName);
+            if (addon.meta?.type != "build" || !checkFileNameForBuild(resFileName)) continue;
+            const result = await addon.run(resFileName);
+            if (result instanceof ReadableStream) {
+                readable = result;
+            } else {
+                throw new Error("Build addon didn't return a readable stream!")
+            }
+            // If readable is set, break out of the loop
+            if (readable) break;
         }
     }
     
-    readable ??= (await Deno.open(`./${websitePath}` + resFileName)).readable;
+    readable ??= (await Deno.open(`./${realPath}` + resFileName)).readable;
 
     // Return the response with the status and the headers
     return new Response(readable, { status: resStatus, headers: headers });
+}
+
+function checkFileNameForBuild(filename: string) {
+    const goodEndings = [".html", ".js"];
+
+    return goodEndings.some(ending => filename.endsWith(ending));
+}
+
+function matchPath(addonPath: string, reqPath: string): boolean {
+    if (addonPath.endsWith("/*")) {
+        const base = addonPath.slice(0, -2);
+        return reqPath.startsWith(base);
+    }
+    return addonPath === reqPath;
 }
 
 // Handle all requests to cappabot.com
@@ -129,9 +157,9 @@ async function handler(req: Request) {
     if (addonsEnabled) {
         for (const addon of addons) {
             // Check if the addon is a request type
-            if (addon.type != "request") continue;
-            if ("/" + addon.path == reqPath) {
-                console.log("found: " + addon.path);
+            if (addon.meta?.type !== "request") continue;
+            if (addon.meta?.path && matchPath(addon.meta.path, reqPath)) {
+                console.log("found: " + addon.meta.path);
                 return await addon.run(req);
             }
         }

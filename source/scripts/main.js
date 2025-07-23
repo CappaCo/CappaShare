@@ -36,7 +36,6 @@ if (evilThings.length > 0) activateEvil();
 
 function activateEvil() {
     for (const evilThing of evilThings) {
-        console.log("Sam is evil: " + evilThing);
-        console.log(evilThing);
+        console.log("Sam is evil:", evilThing);
     };
 }

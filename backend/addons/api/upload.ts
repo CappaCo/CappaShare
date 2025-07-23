@@ -68,7 +68,14 @@ export async function run(req: Request): Promise<Response> {
 
 function handleFormDataUpload(data: FileUploadFormData) {
     console.log("Uploading form data to database");
-    console.log(data);
+
+    const query = "INSERT INTO prod (filename, description) VALUES (?, ?)";
+    const params = [data.title, data.description];
+    console.log("sending query:", query);
+    client.query(query, params)
+        .then(() => {console.log("uploaded formdata")})
+        .catch(error => {console.error("Error uploading file:", error)});
+    
 }
 
 function handleFileUpload(file: File) {
@@ -102,7 +109,8 @@ function checkFormdata(formData: FormData): string {
     });
 
     const file = formData.get("file");
-    if (file !instanceof File) return "file was not a file";
+    console.log("file:", file);
+    if (!(file instanceof File)) return "file was not a file, it was " + typeof file;
 
     return "ok"; 
 }

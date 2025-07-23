@@ -1,45 +1,51 @@
+export interface AddonMeta {
+    type: string;
+    path: string;
+    name?: string;
+    description?: string;
+    version?: string;
+}
+
+export interface AddonModule {
+    run: (...params: any[]) => Response | Promise<Response>;
+    addonType?: string;
+    path?: string;
+    meta?: AddonMeta;
+}
+
 export class Addon {
     fileName: string;
-    type?: string;
-    path?: string;
+    module?: AddonModule;
+    meta?: AddonMeta;
 
     constructor(fileName: string) {
         this.fileName = fileName;
-        this.type = "";
-        this.load();
     }
 
-    async load() {
-        const addonImport = await import("./addons/" + this.fileName);
-        //console.log("loading filename: " + this.fileName);
-
-        this.checkRequirements(addonImport);
-
-        this.run = addonImport.run;
-        this.loadvars(addonImport);
-    }
-
-    loadvars(addonImport: Record<string, unknown>) {
-        this.type = String(addonImport.addonType || "request");
-        this.path = this.fileName.split("/").slice(0, -1).join("/") + addonImport.path;
-    }
-
-    private checkRequirements(addonImport: Record<string, unknown>) {
-        const requiredStuff = ["run"];
-
-        for (const name of requiredStuff) {
-            if (typeof addonImport[name] === "undefined") {
-                throw new Error(`function '${name}' not found in ${this.fileName}`);
-            }
+    async load(): Promise<void> {
+        try {
+            const addonImport: AddonModule = await import("./addons/" + this.fileName);
+            this.checkRequirements(addonImport);
+            this.module = addonImport;
+            this.meta = addonImport.meta ?? {
+                type: addonImport.addonType || "request",
+                path: "/" + this.fileName.split("/").slice(0, -1).join("/") + addonImport.path || "",
+            };
+        } catch (err) {
+            console.error(`Failed to load addon ${this.fileName}:`, err);
         }
     }
 
-    check(_: string): boolean {
-        return false;
+    private checkRequirements(addonImport: AddonModule) {
+        if (typeof addonImport.run !== "function") {
+            throw new Error(`function 'run' not found in ${this.fileName}`);
+        }
     }
 
-    run(..._params: any[]): Response | any | Promise<Response | any> {
-        console.log("run function not set yet");
-        return new Response("server is being lazy, just wait a sec");
+    run(...params: any[]): Response | Promise<Response> | ReadableStream | any {
+        if (!this.module) {
+            return new Response("Addon not loaded", { status: 500 });
+        }
+        return this.module.run(...params);
     }
 }
