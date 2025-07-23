@@ -76,9 +76,6 @@ async function runTests() {
 
     } catch (error) {
         console.error("Error during database operation:", error);
-    } finally {
-        // Ensure client is closed after tests
-        await closeDbClient();
     }
 }
 
@@ -90,14 +87,16 @@ async function makeConsole() {
     while (true) {
         query = prompt("$$$");
         if (!query) continue;
-        result = await client.query(query);
+        result = await client.query(query).catch(error => {return String(error)});
         console.log(result);
     }
 }
 
 if (import.meta.main) {
     await runTests();
-    //makeConsole();
+    await makeConsole();
+} else {
+    await runTests();
 }
 
 // deno-lint-ignore no-explicit-any
