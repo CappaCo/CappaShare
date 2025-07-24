@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /file/*
+Disallow: /download/*
+
+Sitemap: https://share.cappabot.com/sitemap.xml
