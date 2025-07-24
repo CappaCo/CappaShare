@@ -14,7 +14,6 @@ COPY source/ ./source/
 COPY templates/ ./templates/
 COPY deno.json .
 COPY deno.lock .
-COPY .env .
 
 RUN chown -R deno:deno /app
 
