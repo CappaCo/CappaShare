@@ -3,29 +3,85 @@ import "https://deno.land/std@0.224.0/dotenv/load.ts"; // Loads .env file variab
 
 let clientPromise: Promise<Client> | undefined; // Changed to undefined for initial state
 
+const connectionString = Deno.env.get("MYSQL");
+if (!connectionString) {
+    throw new Error("MYSQL connection string not found in environment variables. Please set it in your .env file.");
+}
+
+// Parse the connection string to extract individual components
+const url = new URL(connectionString);
+const hostname = url.hostname;
+const port = parseInt(url.port);
+const username = url.username;
+const password = url.password;
+const db = url.pathname.substring(1); // Remove the leading '/'
+
+const maxPrimeRetries = 3; // Maximum number of retries for connection
+const retryDelay = 2000; // Delay in milliseconds between retries
+let primeRetries = 0; // Initialize retry counter
+
+async function fullPrimer() {
+    // Run a basic shell command to warm up the connection
+    const mysqlArgs = [
+        "--sql",
+        "-h", hostname,
+        "-P", port.toString(),
+        "-u", username,
+        `-p${password}`, // No space between -p and password
+        "--database", db,
+        "-e", "SELECT 1;", // Simple query
+    ];
+
+    try {
+        await primer("mysql");
+    } catch (_err) {
+        console.error("mysql command failed, trying mysqlsh as a fallback...");
+        try {
+            await primer("mysqlsh");
+        } catch (err) {
+            console.error("mysqlsh command also failed:", err);
+            throw new Error("Failed to run mysql or mysqlsh command. Please ensure MySQL client is installed and available in your PATH.");
+        }
+    }
+
+    async function primer(command: string) {
+        console.log("---------");
+        const primerCommand = new Deno.Command(command, {
+            args: mysqlArgs,
+            //stdout: "inherit",
+            stderr: "inherit",
+        });
+        const result = await primerCommand.output();
+        console.log("Result from primer command:", new TextDecoder().decode(result.stdout));
+        console.log("Primer finished with code:", result.code);
+        console.log("---------");
+        if (result.code !== 0) {
+            if (primeRetries < maxPrimeRetries) {
+                primeRetries++;
+                console.log(`Retrying primer command (${primeRetries}/${maxPrimeRetries})...`);
+                await new Promise(resolve => setTimeout(resolve, retryDelay));
+                return primer(command); // Retry the primer command
+            } else {
+                throw new Error(`Primer command failed after ${maxPrimeRetries} attempts.`);
+            }
+        }
+    }
+}
+
+await fullPrimer();
+
 export async function getDbClient(): Promise<Client> {
     if (!clientPromise) { // Check if the connection promise has already been initiated
         clientPromise = (async () => { // Assign the promise here, so subsequent calls await the same promise
-            const connectionString = Deno.env.get("MYSQL"); // Retrieve connection string inside the async function
-            if (!connectionString) {
-                throw new Error("MYSQL connection string not found in environment variables. Please set it in your .env file.");
-            }
-
-            // Parse the connection string to extract individual components
-            const url = new URL(connectionString);
-            const hostname = url.hostname;
-            const port = parseInt(url.port);
-            const username = url.username;
-            const password = url.password;
-            const db = url.pathname.substring(1); // Remove the leading '/'
-
-            const client = await new Client().connect({
+            const client = new Client();
+            await client.connect({
                 hostname: hostname,
                 port: port,
                 username: username,
                 password: password,
                 db: db,
             });
+
             console.log("Successfully connected to Railway MySQL database!");
             return client; // Return the connected client instance
         })();
