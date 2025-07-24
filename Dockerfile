@@ -5,7 +5,7 @@ FROM denoland/deno:2.2.11@sha256:d7375240bf886d994996dd2d41d4fedaf9e01e8d35eb6dc
 USER root
 
 # Install mysql client
-RUN apt-get update && apt-get install -y mysql-client && apt-get clean
+RUN apt-get update && apt-get install -y default-mysql-client && apt-get clean
 
 WORKDIR /app
 
