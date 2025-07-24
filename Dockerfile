@@ -1,6 +1,12 @@
 # Use the official Deno image
 FROM denoland/deno:2.2.11@sha256:d7375240bf886d994996dd2d41d4fedaf9e01e8d35eb6dcba88d9dced8d72050
 
+# Use root to install mysql client
+USER root
+
+# Install mysql client
+RUN apt-get update && apt-get install -y mysql-client && apt-get clean
+
 WORKDIR /app
 
 COPY backend/ ./backend/
