@@ -19,8 +19,7 @@ export async function getDbClient(): Promise<Client> {
             const password = url.password;
             const db = url.pathname.substring(1); // Remove the leading '/'
 
-            const client = new Client();
-            await client.connect({
+            const client = await new Client().connect({
                 hostname: hostname,
                 port: port,
                 username: username,
@@ -56,24 +55,10 @@ async function runTests() {
         client = await getDbClient();
 
         // Single Test: Get current time
-        // Do NOT use array destructuring initially. Get the raw result.
         const result = await client.query("SELECT NOW() as currentTime;");
 
-        console.log("Debug: Raw query result content:", result); // Crucial for debugging
-
         // Check if it's an array and has elements (common for multi-row results)
-        if (Array.isArray(result) && result.length > 0) {
-            console.log("Current time from database:", result[0].currentTime);
-        }
-        // Else, check if it's a direct object with the property (common for single-row results like NOW())
-        else if (typeof result === 'object' && result !== null && 'currentTime' in result) {
-            console.log("Current time from database:", result.currentTime);
-        } else {
-            console.error("Error: SELECT NOW() did not return expected data.");
-            console.error("Debug: Result variable content:", result);
-            throw new Error("Failed to get current time from database: Unexpected query result format.");
-        }
-
+        console.log("Current time from database:", result[0].currentTime);
     } catch (error) {
         console.error("Error during database operation:", error);
     }
