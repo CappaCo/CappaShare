@@ -14,6 +14,7 @@ COPY source/ ./source/
 COPY templates/ ./templates/
 COPY deno.json .
 COPY deno.lock .
+COPY .env .
 
 RUN chown -R deno:deno /app
 
@@ -23,4 +24,14 @@ RUN deno run --allow-read --allow-write backend/build.ts
 
 EXPOSE 8000
 
-CMD ["run", "--allow-net", "--allow-read", "--allow-write", "--allow-env", "--allow-run=mysql", "backend/app.ts"]
+CMD [\
+  "deno",\
+  "run",\
+  "--allow-net",\
+  "--allow-read",\
+  "--allow-write",\
+  "--allow-env",\
+  "--allow-run=mysql",\
+  "--allow-sys=osRelease",\
+  "backend/app.ts"\
+]
