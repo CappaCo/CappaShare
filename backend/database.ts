@@ -45,8 +45,9 @@ async function fullPrimer() {
 
     try {
         await primer("mysql", mysqlArgs);
-    } catch (_err) {
-        console.error("mysql command failed, trying mysqlsh as a fallback...");
+    } catch (err) {
+        console.error("mysql command failed:", err);
+        console.log("Attempting to run mysqlsh as a fallback...");
         try {
             await primer("mysqlsh", mysqlshArgs);
         } catch (err) {
