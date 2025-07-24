@@ -23,31 +23,42 @@ let primeRetries = 0; // Initialize retry counter
 async function fullPrimer() {
     // Run a basic shell command to warm up the connection
     const mysqlArgs = [
-        "--sql",
+        "-h", hostname,
+        "--port", port.toString(),
+        "-u", username,
+        `-p${password}`,
+        "--protocol=TCP",
+        "--ssl-verify-server-cert=0",
+        db,
+        "-e", "SELECT 1;", // Simple query to check connection
+    ]
+
+    const mysqlshArgs = [
         "-h", hostname,
         "-P", port.toString(),
         "-u", username,
-        `-p${password}`, // No space between -p and password
+        `-p${password}`,
+        "--sql",
         "--database", db,
         "-e", "SELECT 1;", // Simple query
     ];
 
     try {
-        await primer("mysql");
+        await primer("mysql", mysqlArgs);
     } catch (_err) {
         console.error("mysql command failed, trying mysqlsh as a fallback...");
         try {
-            await primer("mysqlsh");
+            await primer("mysqlsh", mysqlshArgs);
         } catch (err) {
             console.error("mysqlsh command also failed:", err);
             throw new Error("Failed to run mysql or mysqlsh command. Please ensure MySQL client is installed and available in your PATH.");
         }
     }
 
-    async function primer(command: string) {
+    async function primer(command: string, args: string[]) {
         console.log("---------");
         const primerCommand = new Deno.Command(command, {
-            args: mysqlArgs,
+            args: args,
             //stdout: "inherit",
             stderr: "inherit",
         });
@@ -60,7 +71,7 @@ async function fullPrimer() {
                 primeRetries++;
                 console.log(`Retrying primer command (${primeRetries}/${maxPrimeRetries})...`);
                 await new Promise(resolve => setTimeout(resolve, retryDelay));
-                return primer(command); // Retry the primer command
+                return primer(command, args); // Retry the primer command
             } else {
                 throw new Error(`Primer command failed after ${maxPrimeRetries} attempts.`);
             }
