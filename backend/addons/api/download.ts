@@ -1,9 +1,7 @@
-import { getDbClient, Result } from "../../database.ts";
+import { client, Result } from "../../database.ts";
 import 'https://deno.land/x/dotenv@v3.2.2/load.ts';
 
 export const path = "/download/*";
-
-const client = await getDbClient();
 
 export async function run(req: Request): Promise<Response> {
     const method = req.method;
@@ -23,7 +21,7 @@ export async function run(req: Request): Promise<Response> {
             query = `SELECT * FROM prod;`;
         }
         console.log("sending query:", query);
-        const result = await client.query(query, params)
+        const result: Result = await client.query(query, params)
             .catch(error => {return String(error)});
         return new Response(JSON.stringify(result), { headers: { "content-type": "application/json" } });
     }

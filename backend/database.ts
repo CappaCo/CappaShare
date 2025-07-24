@@ -1,8 +1,13 @@
-import { Client } from "https://deno.land/x/mysql@v2.12.1/mod.ts";
+import { Client as sqlClient } from "https://deno.land/x/mysql@v2.12.1/mod.ts";
 import "https://deno.land/std@0.224.0/dotenv/load.ts"; // Loads .env file variables into Deno.env
+import {
+    GetObjectCommand,
+    ListObjectsV2Command,
+    PutObjectCommand,
+    S3Client,
+} from "npm:@aws-sdk/client-s3";
 
-let clientPromise: Promise<Client> | undefined; // Changed to undefined for initial state
-
+// Environment variables
 const connectionString = Deno.env.get("MYSQL");
 if (!connectionString) {
     throw new Error("MYSQL connection string not found in environment variables. Please set it in your .env file.");
@@ -16,10 +21,18 @@ const username = url.username;
 const password = url.password;
 const db = url.pathname.substring(1); // Remove the leading '/'
 
+const R2_KEY = Deno.env.get("R2_KEY")!;
+const R2_SECRET = Deno.env.get("R2_SECRET")!;
+const R2_ACCOUNT_ID = Deno.env.get("R2_ACCOUNT_ID")!;
+const R2_BUCKET = Deno.env.get("R2_BUCKET")!;
+const R2_ENDPOINT = `https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`;
+
+// Other variables
 const maxPrimeRetries = 3; // Maximum number of retries for connection
 const retryDelay = 2000; // Delay in milliseconds between retries
 let primeRetries = 0; // Initialize retry counter
 
+// Primer function
 async function fullPrimer() {
     // Run a basic shell command to warm up the connection
     const mysqlArgs = [
@@ -80,48 +93,9 @@ async function fullPrimer() {
     }
 }
 
-await fullPrimer();
-
-export async function getDbClient(): Promise<Client> {
-    if (!clientPromise) { // Check if the connection promise has already been initiated
-        clientPromise = (async () => { // Assign the promise here, so subsequent calls await the same promise
-            const client = new Client();
-            await client.connect({
-                hostname: hostname,
-                port: port,
-                username: username,
-                password: password,
-                db: db,
-            });
-
-            console.log("Successfully connected to Railway MySQL database!");
-            return client; // Return the connected client instance
-        })();
-    }
-    return await clientPromise; // Await the promise and return the resolved client instance
-}
-
-/**
- * Closes the database client connection if it exists.
- * This should typically be called when your application is shutting down.
- */
-export async function closeDbClient(): Promise<void> {
-    if (clientPromise) {
-        const client = await clientPromise; // Await the promise to get the client instance
-        if (client) {
-            await client.close();
-            console.log("Database connection closed.");
-        }
-        clientPromise = undefined; // Reset the promise so a new connection can be made if needed
-    }
-}
-
 // Moved runTests function declaration to the module root
 async function runTests() {
-    let client: Client | undefined;
     try {
-        client = await getDbClient();
-
         // Single Test: Get current time
         const result = await client.query("SELECT NOW() as currentTime;");
 
@@ -130,12 +104,15 @@ async function runTests() {
     } catch (error) {
         console.error("Error during database operation:", error);
     }
+
+    // Example usage: List objects
+    const results = await client.listObjects();
+    console.log("Objects in bucket:", results);
 }
 
 async function makeConsole() {
     let query;
     let result;
-    const client = await getDbClient();
 
     while (true) {
         query = prompt("$$$");
@@ -145,12 +122,77 @@ async function makeConsole() {
     }
 }
 
-if (import.meta.main) {
-    await runTests();
-    await makeConsole();
-} else {
-    await runTests();
+// deno-lint-ignore no-explicit-any
+export type Result = Record<string, any>[];
+
+class Client {
+    s3Client: S3Client;
+    sqlClient: sqlClient;
+
+    constructor() {
+        // Initialize the S3 client
+        this.s3Client = new S3Client({
+            region: "auto",
+            endpoint: R2_ENDPOINT,
+            credentials: {
+                accessKeyId: R2_KEY,
+                secretAccessKey: R2_SECRET,
+            },
+        });
+
+        this.sqlClient = new sqlClient();
+    }
+
+    async load() {
+        await this.sqlClient.connect({
+            hostname: hostname,
+            port: port,
+            username: username,
+            password: password,
+            db: db,
+        });
+    }
+
+    // mySQL query method
+    async query(query: string, params?: any[]) {
+        return await this.sqlClient.query(query, params);
+    }
+
+    // S3 methods
+    async listObjects() {
+        const command = new ListObjectsV2Command({
+            Bucket: R2_BUCKET
+        });
+        const response = await this.s3Client.send(command);
+        return response.Contents || [];
+    }
+
+    async getObject(key: string) {
+        const command = new GetObjectCommand({
+            Bucket: R2_BUCKET,
+            Key: key
+        });
+        const response = await this.s3Client.send(command);
+        return response.Body;
+    }
+
+    async putObject(key: string, body: string | Uint8Array) {
+        const command = new PutObjectCommand({
+            Bucket: R2_BUCKET,
+            Key: key,
+            Body: body,
+        });
+        await this.s3Client.send(command);
+    }
 }
 
-// deno-lint-ignore no-explicit-any
-export type Result = Array<Record<any, any>>;
+const unloadedClient = new Client();
+await unloadedClient.load();
+export const client = unloadedClient;
+
+await fullPrimer();
+await runTests();
+
+if (import.meta.main) {
+    await makeConsole();
+}

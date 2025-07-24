@@ -83,11 +83,13 @@ async function websiteRequest(req: Request): Promise<Response> {
 
     // Get the file
     let resFileName;
-    let realPath;
+    let realPath = websitePath;
     resFileName = await getTheFile(reqFilePath, websitePath);
     if (resFileName == "/404.html") {
         resFileName = await getTheFile(reqFilePath, sourcePath);
-        if (resFileName != "/404.html") {
+        if (resFileName == "/404.html") {
+            realPath = websitePath;
+        } else {
             realPath = sourcePath;
         }
     } else {
