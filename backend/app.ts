@@ -135,6 +135,7 @@ async function websiteRequest(req: Request): Promise<Response> {
 }
 
 function matchPath(addonPath: string, reqPath: string): boolean {
+    //console.log("Matching path:", addonPath, "with request path:", reqPath);
     if (addonPath.endsWith("/*")) {
         const base = addonPath.slice(0, -2);
         return reqPath.startsWith(base);

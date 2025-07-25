@@ -1,7 +1,7 @@
-import { client, Result } from "../../database.ts";
-import 'https://deno.land/x/dotenv@v3.2.2/load.ts';
+import "@std/dotenv/load";
+import { client } from "../../database.ts";
 
-export const path = "/download/*";
+export const path = "*";
 
 export async function run(req: Request): Promise<Response> {
     const method = req.method;
@@ -10,20 +10,43 @@ export async function run(req: Request): Promise<Response> {
         console.log("getting get request");
 
         const url = new URL(req.url);
-        const file = url.pathname.slice("/api/download/".length);
-        console.log("file:", file);
-        let query;
-        const params: string[] = [];
-        if (file) {
-            query = `SELECT * FROM prod WHERE filename = ?;`;
-            params.push(file);
-        } else {
-            query = `SELECT * FROM prod;`;
+        const segments = url.pathname.split("/");
+        const slug = segments.at(-1);
+        const pieces = slug?.split("-")
+        const fileName = pieces?.slice(0, -1).join("-");
+        const id = pieces?.at(-1);
+
+        console.log("Request ID:", id);
+        // Get the file from r2
+        if (!id) {
+            return new Response("Please provide an ID", { status: 400 });
         }
-        console.log("sending query:", query);
-        const result: Result = await client.query(query, params)
-            .catch(error => {return String(error)});
-        return new Response(JSON.stringify(result), { headers: { "content-type": "application/json" } });
+
+        return await client.getObject(id)
+            .then((data) => {
+                if (!data) {
+                    console.error("No data returned for ID:", id);
+                    return new Response("No data returned", { status: 404 });
+                }
+
+                if (!data.Body) {
+                    console.log("File not found:", id);
+                    return new Response("File not found", { status: 404 });
+                }
+                
+                return new Response(data.Body, {
+                    headers: {
+                        "Content-Type": "application/octet-stream",
+                        "Content-Disposition": `attachment; filename="${fileName || "download.bin"}"`,
+                    },
+                });
+            }).catch((error) => {
+                if (error.name === "NoSuchKey") {
+                    return new Response("File not found", { status: 404 });
+                }
+                console.error("Error getting object:", error);
+                return new Response("Error getting file", { status: 500 });
+            });
     }
 
     return new Response("yeah idk");

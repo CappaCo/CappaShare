@@ -4,6 +4,7 @@
     "include": ["backend/"]
   },
   "imports": {
+    "@std/dotenv": "jsr:@std/dotenv@^0.225.5",
     "@std/fs": "jsr:@std/fs@^1.0.16"
   },
   "tasks": {

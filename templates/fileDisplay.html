@@ -1,5 +1,9 @@
 <div>
-    <p><img alt="Approved mark." src="/images/tick.png" class="icon"></p>
+    <p>${
+        verified ? 
+        '<img alt="Verified mark." src="/images/tick.png" class="icon"></p>' :
+        '<img alt="Not verified mark." src="/images/cross.png" class="icon">'
+    }</p>
     <p>${title}</p>
 </div>
 <div>

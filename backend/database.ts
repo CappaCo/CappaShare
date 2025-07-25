@@ -1,5 +1,7 @@
+import "@std/dotenv/load";
+
+// Import clients for mysql and s3 (r2)
 import { Client as sqlClient } from "https://deno.land/x/mysql@v2.12.1/mod.ts";
-import "https://deno.land/std@0.224.0/dotenv/load.ts"; // Loads .env file variables into Deno.env
 import {
     GetObjectCommand,
     ListObjectsV2Command,
@@ -19,7 +21,7 @@ const hostname = url.hostname;
 const port = parseInt(url.port);
 const username = url.username;
 const password = url.password;
-const db = url.pathname.substring(1); // Remove the leading '/'
+const db = url.pathname.substring(1); // Remove the leading /
 
 const R2_KEY = Deno.env.get("R2_KEY")!;
 const R2_SECRET = Deno.env.get("R2_SECRET")!;
@@ -69,15 +71,16 @@ async function fullPrimer() {
         }
     }
 
+    console.log("Primer completed successfully. Database connection is ready.");
+
     async function primer(command: string, args: string[]) {
         console.log("---------");
         const primerCommand = new Deno.Command(command, {
             args: args,
-            //stdout: "inherit",
-            stderr: "inherit",
         });
         const result = await primerCommand.output();
-        console.log("Result from primer command:", new TextDecoder().decode(result.stdout));
+        console.log("Result from primer command:\n" + new TextDecoder().decode(result.stdout));
+        console.log("Errors from primer command:\n" + new TextDecoder().decode(result.stderr));
         console.log("Primer finished with code:", result.code);
         console.log("---------");
         if (result.code !== 0) {
@@ -173,7 +176,7 @@ class Client {
             Key: key
         });
         const response = await this.s3Client.send(command);
-        return response.Body;
+        return response;
     }
 
     async putObject(key: string, body: string | Uint8Array) {
@@ -191,8 +194,8 @@ await unloadedClient.load();
 export const client = unloadedClient;
 
 await fullPrimer();
-await runTests();
 
 if (import.meta.main) {
+    await runTests();
     await makeConsole();
 }

@@ -3,7 +3,7 @@ console.log("download.js is yup");
 const fileList = document.getElementById("fileList");
 console.log(fileList);
 
-fetch("/api/download/")
+fetch("/api/search")
     .then(response => response.json())
     .then(renderFiles)
     .catch(error => {
@@ -15,7 +15,9 @@ function renderFiles(data) {
     console.log("rendering data:", data);
 
     for (const fileData of data) {
-        const link = fileData.link || "bunger";
+        console.log("fileData:", fileData);
+        const link = `/files/${fileData.filename}-${fileData.id}`;
+        const verified = fileData.verified === 1 || false;
         const title = fileData.filename;
         const description = fileData.description;
         const tags = "tags";

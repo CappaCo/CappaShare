@@ -1,29 +1,16 @@
+import "@std/dotenv/load";
+import { customAlphabet } from "https://deno.land/x/nanoid@v3.0.0/mod.ts";
 import { client, Result } from "../../database.ts";
-import 'https://deno.land/x/dotenv@v3.2.2/load.ts';
 
-export const path = "/upload";
 const MB = 1000000;
-
-try {
-    console.log("Client: " + client);
-    console.log("Trying to test sql");
-
-    const result: Result = await client.query("SELECT * FROM prod");
-    console.log("\nresult:");
-    console.log(result);
-    console.log("first line:");
-    console.log(result[0]);
-    console.log("id of first row:");
-    console.log(result[0].id);
-} catch (error) {
-    console.log("Error making sql client:\n" + error);
-}
+const table = Deno.env.get("TABLE") || "prod";
+const generateId = customAlphabet("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 16);
 
 export async function run(req: Request): Promise<Response> {
     console.log("file upload incoming");
     const method = req.method;
     
-    if (method != "POST") return new Response("method not allowed", { status: 405 });
+    if (method != "POST") return new Response("Method not allowed", { status: 405 });
 
     // TODO: async
     console.log("getting formdata");
@@ -52,8 +39,10 @@ export async function run(req: Request): Promise<Response> {
         return new Response(fileCheckResponse, { status: 400 });
     }
     
-    handleFormDataUpload(data);
-    handleFileUpload(file);
+    const id = generateId();
+    console.log("File ID: " + id);
+    handleFormDataUpload(data, id);
+    handleFileUpload(file, id);
     console.groupEnd();
     console.log("---------------------------------");
 
@@ -62,23 +51,49 @@ export async function run(req: Request): Promise<Response> {
     }));
 }
 
-function handleFormDataUpload(data: FileUploadFormData) {
+function handleFileUpload(file: File, id: string) {
+    console.log("uploading file to r2:", id);
+    file.arrayBuffer()
+        .then((buffer) => {
+            console.log("File buffer size:", buffer.byteLength);
+            return client.putObject(id, new Uint8Array(buffer));
+        })
+        .then(() => {
+            console.log("File uploaded successfully with ID:", id);
+        })
+        .catch((error) => {
+            console.error("Error uploading file:", error);
+        });
+}
+
+function handleFormDataUpload(data: FileUploadFormData, id: string) {
     console.log("Uploading form data to database");
 
-    const query = "INSERT INTO prod (filename, description) VALUES (?, ?)";
-    const params = [data.title, data.description];
-    console.log("sending query:", query);
+    const query = `
+        INSERT INTO files (
+            id,
+            filename,
+            title,
+            description,
+            content_type,
+            size_bytes,
+            extension
+        ) VALUES (?, ?, ?, ?, ?, ?, ?);
+    `;
+    const params = [
+        id,
+        data.file.name,
+        data.title,
+        data.description,
+        data.file.type,
+        data.file.size,
+        data.file.name.split(".").at(-1) || "unknown",
+    ];
+    console.log("Sending query:", query);
     client.query(query, params)
         .then(() => {console.log("uploaded formdata")})
         .catch(error => {console.error("Error uploading file:", error)});
     
-}
-
-function handleFileUpload(file: File) {
-    console.log(file);
-    //const fileFr = new Uint8Array(await file.arrayBuffer());
-    console.log("Pretend I uploaded the file to the server");
-    //await Deno.writeFile(`./backend/uploads/${file.name}`, fileFr);
 }
 
 interface FileUploadFormData {
