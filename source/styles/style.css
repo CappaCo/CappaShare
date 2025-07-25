@@ -326,7 +326,6 @@ textarea {
     justify-content: space-between;
     padding: 16px;
     margin: var(--margin-vertical) 16px;
-    width: 100%;
 }
 
 .fileList * {

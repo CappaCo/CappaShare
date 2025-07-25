@@ -1,7 +1,6 @@
 console.log("download.js is yup");
 
 const fileList = document.getElementById("fileList");
-console.log(fileList);
 
 fetch("/api/search")
     .then(response => response.json())
@@ -15,20 +14,31 @@ function renderFiles(data) {
     console.log("rendering data:", data);
 
     for (const fileData of data) {
-        console.log("fileData:", fileData);
-        const link = `/files/${fileData.filename}-${fileData.id}`;
+        const id = fileData.id;
+        const title = fileData.title;
+        const description = fileData.description || "No description";
+        const filename = fileData.filename;
+        const tags = JSON.parse(fileData.tags);
         const verified = fileData.verified === 1 || false;
-        const title = fileData.filename;
-        const description = fileData.description;
-        const tags = "tags";
+
+        const unbuiltHtml = `
+<!-- fileDisplay.html HERE -->
+        `.trim();
+
+        const link = `/files/${filename}-${id}`;
 
         const newElement = document.createElement("a");
         newElement.setAttribute("href", link);
-        newElement.innerHTML = `
-<!-- fileDisplay.html HERE -->
-        `
 
-        console.log(newElement);
+        const html = unbuiltHtml
+            .replaceAll("{{id}}", id)
+            .replaceAll("{{title}}", DOMPurify.sanitize(title))
+            .replaceAll("{{description}}", DOMPurify.sanitize(description))
+            .replaceAll("{{filename}}", DOMPurify.sanitize(filename))
+            .replaceAll("{{tags}}", DOMPurify.sanitize(tags.join(", ")))
+            .replaceAll("{{verified}}", verified ? "Verified" : "Not Verified");
+
+        newElement.innerHTML = html;
         fileList.appendChild(newElement);
     }
 }

@@ -1,4 +1,6 @@
 import "@std/dotenv/load";
+import DOMPurify from "npm:isomorphic-dompurify";
+
 import { client, Result } from "../database.ts";
 import { buildSingleFile } from "../build.ts";
 
@@ -22,8 +24,8 @@ export async function run(req: Request): Promise<Response> {
         }
 
         console.log("cwd:", Deno.cwd());
-        const htmlFileUnbuilt = Deno.readTextFileSync("templates/file.html");
-        const htmlFile = await buildSingleFile(htmlFileUnbuilt);
+        const rawHtmlFile = Deno.readTextFileSync("templates/file.html");
+        const unbuiltHtml = await buildSingleFile(rawHtmlFile);
 
         const query = `SELECT * FROM ${table} WHERE id = ?;`;
         const params = [id];
@@ -38,18 +40,19 @@ export async function run(req: Request): Promise<Response> {
                 console.log("result:", result);
 
                 const fileData = result[0];
-                const filename = fileData.filename;
+
                 const title = fileData.title;
                 const description = fileData.description || "No description";
+                const filename = fileData.filename;
                 const tags = JSON.parse(fileData.tags);
                 const verified = fileData.verified === 1 || false;
 
-                const html = htmlFile
+                const html = unbuiltHtml
                     .replaceAll("{{id}}", id)
-                    .replaceAll("{{title}}", title)
-                    .replaceAll("{{description}}", description)
-                    .replaceAll("{{filename}}", filename)
-                    .replaceAll("{{tags}}", tags.join(", "))
+                    .replaceAll("{{title}}", DOMPurify.sanitize(title))
+                    .replaceAll("{{description}}", DOMPurify.sanitize(description))
+                    .replaceAll("{{filename}}", DOMPurify.sanitize(filename))
+                    .replaceAll("{{tags}}", DOMPurify.sanitize(tags.join(", ")))
                     .replaceAll("{{verified}}", verified ? "Verified" : "Not Verified");
 
                 return new Response(html, { headers: { "Content-Type": "text/html" } });

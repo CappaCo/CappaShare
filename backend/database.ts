@@ -157,7 +157,7 @@ class Client {
     }
 
     // mySQL query method
-    async query(query: string, params?: any[]) {
+    async query(query: string, params?: (string | number)[]) {
         return await this.sqlClient.query(query, params);
     }
 
@@ -179,11 +179,12 @@ class Client {
         return response;
     }
 
-    async putObject(key: string, body: string | Uint8Array) {
+    async putObject(key: string, body: string | Uint8Array, contentType: string = "application/octet-stream") {
         const command = new PutObjectCommand({
             Bucket: R2_BUCKET,
             Key: key,
             Body: body,
+            ContentType: contentType,
         });
         await this.s3Client.send(command);
     }

@@ -1,8 +1,9 @@
 import "@std/dotenv/load";
 import { customAlphabet } from "https://deno.land/x/nanoid@v3.0.0/mod.ts";
-import { client, Result } from "../../database.ts";
+import { client } from "../../database.ts";
 
 const MB = 1000000;
+const fileSizeLimit = 20*MB;
 const table = Deno.env.get("TABLE") || "prod";
 const generateId = customAlphabet("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 16);
 
@@ -56,7 +57,7 @@ function handleFileUpload(file: File, id: string) {
     file.arrayBuffer()
         .then((buffer) => {
             console.log("File buffer size:", buffer.byteLength);
-            return client.putObject(id, new Uint8Array(buffer));
+            return client.putObject(id, new Uint8Array(buffer), file.type);
         })
         .then(() => {
             console.log("File uploaded successfully with ID:", id);
@@ -70,7 +71,7 @@ function handleFormDataUpload(data: FileUploadFormData, id: string) {
     console.log("Uploading form data to database");
 
     const query = `
-        INSERT INTO files (
+        INSERT INTO ${table} (
             id,
             filename,
             title,
@@ -89,7 +90,7 @@ function handleFormDataUpload(data: FileUploadFormData, id: string) {
         data.file.size,
         data.file.name.split(".").at(-1) || "unknown",
     ];
-    console.log("Sending query:", query);
+    console.log("Sending query:", query, "params:", params);
     client.query(query, params)
         .then(() => {console.log("uploaded formdata")})
         .catch(error => {console.error("Error uploading file:", error)});
@@ -143,7 +144,7 @@ function getFormdata(formData: FormData): FileUploadFormData {
 }
 
 function checkFile(file: File): string {
-    if (file.size > 10 * MB) {
+    if (file.size > fileSizeLimit) {
         return "File too big";
     }
 
