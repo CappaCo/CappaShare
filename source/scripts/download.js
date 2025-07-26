@@ -2,6 +2,7 @@ console.log("download.js is yup");
 
 const fileList = document.getElementById("fileList");
 
+// TODO: query string for searching
 fetch("/api/search")
     .then(response => response.json())
     .then(renderFiles)

@@ -18,9 +18,6 @@ export async function run(req: Request): Promise<Response> {
     const formData = await req.formData();
     console.log("got formdata");
 
-    console.log("---------------------------------");
-    console.group();
-
     const checkResponse = checkFormdata(formData);
     if (checkResponse != "ok") {
         console.error("Form checks failed: " + checkResponse);
@@ -29,12 +26,7 @@ export async function run(req: Request): Promise<Response> {
 
     const data = getFormdata(formData);
 
-    const { title, description, file } = data;
-
-    console.log("File title: " + title);
-    console.log("File description: " + description);
-
-    const fileCheckResponse = checkFile(file);
+    const fileCheckResponse = checkFile(data.file);
     if (fileCheckResponse != "ok") {
         console.error("File checks failed: " + fileCheckResponse);
         return new Response(fileCheckResponse, { status: 400 });
@@ -42,19 +34,30 @@ export async function run(req: Request): Promise<Response> {
     
     const id = generateId();
     console.log("File ID: " + id);
-    handleFormDataUpload(data, id);
-    handleFileUpload(file, id);
-    console.groupEnd();
-    console.log("---------------------------------");
 
-    return new Response(JSON.stringify({
-        message: "hooray"
-    }));
+    const uploadPromise = handleFileUpload(data.file, id)
+        .then(() => {
+            return handleFormDataUpload(data, id);
+        }).then(() => {
+            return new Response(JSON.stringify({
+                message: "file uploaded",
+                link: `/files/${data.file.name}-${id}`,
+            }));
+        }).catch((error) => {
+            console.error("Error uploading file", id, error);
+            return new Response(
+                JSON.stringify({
+                    message: "Error uploading your file: " + error
+                }),
+                { status: 500 }
+            );
+        });
+    return uploadPromise;
 }
 
 function handleFileUpload(file: File, id: string) {
     console.log("uploading file to r2:", id);
-    file.arrayBuffer()
+    return file.arrayBuffer()
         .then((buffer) => {
             console.log("File buffer size:", buffer.byteLength);
             return client.putObject(id, new Uint8Array(buffer), file.type);
@@ -76,34 +79,36 @@ function handleFormDataUpload(data: FileUploadFormData, id: string) {
             filename,
             title,
             description,
+            tags,
             content_type,
             size_bytes,
             extension
-        ) VALUES (?, ?, ?, ?, ?, ?, ?);
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
     `;
     const params = [
         id,
         data.file.name,
         data.title,
         data.description,
+        JSON.stringify(data.tags),
         data.file.type,
         data.file.size,
         data.file.name.split(".").at(-1) || "unknown",
     ];
     console.log("Sending query:", query, "params:", params);
-    client.query(query, params)
-        .then(() => {console.log("uploaded formdata")})
-        .catch(error => {console.error("Error uploading file:", error)});
-    
+    return client.query(query, params)
+        .then(() => { console.log("Uploaded formdata") })
+        .catch(error => { console.error("Error uploading file:", error) });
 }
 
-interface FileUploadFormData {
+type FileUploadFormData = {
     title: string;
     description: string;
+    tags: string[];
     file: File;
 }
 
-const requiredFormData = ["title", "description", "file"];
+const requiredFormData = ["title", "file"];
 
 function checkFormdata(formData: FormData): string {
     console.log("Checking formData");
@@ -136,11 +141,14 @@ function getFormdata(formData: FormData): FileUploadFormData {
         throw new Error("File was not a file, did you check the form data first?");
     }
 
-    return {
-        "title": formData.get("title") as string,
-        "description": formData.get("description") as string,
-        "file": file,
+    const fileUploadFormData: FileUploadFormData = {
+        title: formData.get("title") as string,
+        description: (formData.get("description") || "") as string,
+        tags: JSON.parse((formData.get("tags") || "[]") as string),
+        file: file,
     }
+
+    return fileUploadFormData;
 }
 
 function checkFile(file: File): string {

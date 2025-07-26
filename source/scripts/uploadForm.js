@@ -6,6 +6,7 @@ form.addEventListener("submit", uploadForm);
 
 let fileSize = 0;
 const MB = 1000000;
+const fileSizeLimit = 20*MB;
 
 function uploadForm(event) {
     event.preventDefault();
@@ -21,10 +22,14 @@ function uploadForm(event) {
         return;
     }
 
+    if (!formData.get("title")) {
+        alert("Title is required");
+    }
+
     fileSize = file.size;
     console.log("fileSize: " + fileSize);
 
-    if (fileSize > 10*MB) {
+    if (fileSize > fileSizeLimit) {
         console.log("File too big");
         alert("File too big");
         return;
