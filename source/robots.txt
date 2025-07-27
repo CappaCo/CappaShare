@@ -1,6 +1,7 @@
 User-agent: *
 Allow: /
-Disallow: /file/*
-Disallow: /download/*
+Disallow: /admin
+Disallow: /files/*
+Disallow: /api/download/*
 
 Sitemap: https://share.cappabot.com/sitemap.xml
