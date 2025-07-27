@@ -1,12 +1,13 @@
 /* Variables */
 :root {
     font-size: 20px;
+
     /* Colors */
     --background: #020202;
     --primary: #ffffff;
     --secondary: #020202; 
 
-    /* hover */
+    /* Hover */
     --primary-hover: #ddd;
     --secondary-hover: #333;
 
@@ -376,10 +377,6 @@ form {
     width: 16px;
     height: 16px;
     border-radius: 0px;
-}
-
-.evilDownload {
-    
 }
 
 /* samEvilBar 🥀 */

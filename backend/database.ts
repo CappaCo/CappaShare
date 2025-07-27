@@ -46,7 +46,7 @@ async function fullPrimer() {
         "--ssl-verify-server-cert=0",
         db,
         "-e", "SELECT 1;", // Simple query to check connection
-    ]
+    ];
 
     const mysqlshArgs = [
         "-h", hostname,
