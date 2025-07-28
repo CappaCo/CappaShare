@@ -3,7 +3,7 @@ import { customAlphabet } from "https://deno.land/x/nanoid@v3.0.0/mod.ts";
 import { client } from "../../database.ts";
 
 const MB = 1000000;
-const fileSizeLimit = 20*MB;
+const fileSizeLimit = 100*MB;
 const table = Deno.env.get("TABLE") || "prod";
 const generateId = customAlphabet("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 16);
 
