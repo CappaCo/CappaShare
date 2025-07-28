@@ -210,7 +210,7 @@ const unloadedClient = new Client();
 await unloadedClient.load();
 export const client = unloadedClient;
 
-//await fullPrimer();
+await fullPrimer();
 
 if (import.meta.main) {
     await runTests();
