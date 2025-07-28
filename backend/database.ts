@@ -45,7 +45,7 @@ async function fullPrimer() {
         "--protocol=TCP",
         "--ssl-verify-server-cert=0",
         db,
-        "-e", "SELECT 1;", // Simple query to check connection
+        "-e", "SELECT 68;", // Simple query to check connection
     ];
 
     const mysqlshArgs = [
@@ -55,7 +55,7 @@ async function fullPrimer() {
         `-p${password}`,
         "--sql",
         "--database", db,
-        "-e", "SELECT 1;", // Simple query
+        "-e", "SELECT 68;", // Simple query
     ];
 
     try {
@@ -157,8 +157,24 @@ class Client {
     }
 
     // mySQL query method
-    async query(query: string, params?: (string | number)[]) {
-        return await this.sqlClient.query(query, params);
+    query(query: string, params?: (string | number)[]) {
+        return this.sqlClient.query(query, params)
+            .catch(error => {
+                if (error instanceof Error) {
+                    console.error("MySQL query error:", error.message);
+                    if (error.message.includes("Access denied for user") && error.message.includes("using password: YES")) {
+                        fullPrimer()
+                            .then(() => {
+                                console.log("Reconnecting to MySQL after primer...");
+                                return this.sqlClient.query(query, params);
+                            })
+                            .catch(err => {
+                                console.error("Failed to reconnect after primer:", err);
+                                throw err;
+                            });
+                    }
+                }
+            });
     }
 
     // S3 methods
@@ -194,7 +210,7 @@ const unloadedClient = new Client();
 await unloadedClient.load();
 export const client = unloadedClient;
 
-await fullPrimer();
+//await fullPrimer();
 
 if (import.meta.main) {
     await runTests();

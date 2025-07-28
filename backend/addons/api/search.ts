@@ -34,8 +34,8 @@ export async function run(req: Request): Promise<Response> {
             `;
         }
         console.log("sending query:", query, "params:", params);
-        const result: Result = await client.query(query, params)
-            .catch(error => {return String(error)});
+        const result: Result = await client.query(query, params);
+        
         return new Response(JSON.stringify(result), { headers: { "content-type": "application/json" } });
     }
 
