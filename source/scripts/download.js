@@ -2,17 +2,38 @@ console.log("download.js is yup");
 
 const fileList = document.getElementById("fileList");
 
-// TODO: query string for searching
-fetch("/api/search")
-    .then(response => response.json())
-    .then(renderFiles)
-    .catch(error => {
-        console.error("Fetch error:", error);
-    });
+const queryString = globalThis.location.search;
+console.log("queryString: " + queryString);
+
+fetchFiles(queryString);
+
+function fetchFiles(query = "") {
+    console.log("Fetching files...");
+    fetch("/api/search" + query)
+        .then(handleResponse)
+        .then(renderFiles)
+        .catch(error => {
+            console.error("Fetch error:", error);
+        });
+}
+
+function handleResponse(response) {
+    if (!response.ok) {
+        alert("Network response was not ok: " + response.statusText);
+        throw new Error("Network response was not ok: " + response.statusText);
+    }
+
+    return response.json();
+}
 
 function renderFiles(data) {
+    if (!data || data.length == 0) {
+        console.log("No files found");
+        fileList.innerHTML = "<p>No files found.</p>";
+        return;
+    }
+
     fileList.innerHTML = "";
-    console.log("rendering data:", data);
 
     for (const fileData of data) {
         const id = fileData.id;

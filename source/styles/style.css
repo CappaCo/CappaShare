@@ -283,6 +283,10 @@ body > img {
     margin: 10px;
 }
 
+form * {
+    font-size: 1rem;
+}
+
 input {
     color: var(--primary);
     background-color: var(--secondary);
