@@ -37,8 +37,10 @@ export async function run(req: Request): Promise<Response> {
 
     const uploadPromise = handleFileUpload(data.file, id)
         .then(() => {
+            console.log("File upload completed, uploading formData");
             return handleFormDataUpload(data, id);
         }).then(() => {
+            console.log("Database upload also completed");
             return new Response(JSON.stringify({
                 message: "file uploaded",
                 link: `/files/${data.file.name}-${id}`,
