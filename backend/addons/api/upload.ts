@@ -2,12 +2,13 @@ import "@std/dotenv/load";
 import { customAlphabet } from "https://deno.land/x/nanoid@v3.0.0/mod.ts";
 import { client } from "../../database.ts";
 
-const MB = 1000000;
-const fileSizeLimit = 100*MB;
+const MB = 1_000_000;
+const fileSizeLimit = 50*MB;
 const table = Deno.env.get("TABLE") || "prod";
 const generateId = customAlphabet("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 16);
 
 export async function run(req: Request): Promise<Response> {
+    console.log("----------");
     console.log("file upload incoming");
     const method = req.method;
     
@@ -18,13 +19,23 @@ export async function run(req: Request): Promise<Response> {
     const formData = await req.formData();
     console.log("got formdata");
 
-    const checkResponse = checkFormdata(formData);
-    if (checkResponse != "ok") {
-        console.error("Form checks failed: " + checkResponse);
-        return new Response(checkResponse, { status: 400 });
+    let data: FileUploadFormData;
+    try {
+        data = getFormdata(formData);
+    } catch (error) {
+        console.error("Error getting formdata:", error);
+        if (error instanceof Error) {
+            return new Response(
+                JSON.stringify({ message: "Error getting formdata: " + error.message }),
+                { status: 400 }
+            );
+        } else {
+            return new Response(
+                JSON.stringify({ message: "Unknown error getting formdata" }),
+                { status: 500 }
+            );
+        }
     }
-
-    const data = getFormdata(formData);
 
     const fileCheckResponse = checkFile(data.file);
     if (fileCheckResponse != "ok") {
@@ -39,21 +50,33 @@ export async function run(req: Request): Promise<Response> {
         .then(() => {
             console.log("File upload completed, uploading formData");
             return handleFormDataUpload(data, id);
-        }).then(() => {
+        })
+        .catch((error) => {
+            console.error("Error uploading file to R2:", id, error);
+            return new Response(
+                JSON.stringify({
+                    message: "Error uploading your file: " + error.message
+                }),
+                { status: 500 }
+            );
+        })
+        .then(() => {
             console.log("Database upload also completed");
             return new Response(JSON.stringify({
                 message: "file uploaded",
                 link: `/files/${data.file.name}-${id}`,
             }));
-        }).catch((error) => {
-            console.error("Error uploading file", id, error);
+        })
+        .catch((error) => {
+            console.error("Error uploading file data to database", id, error);
             return new Response(
                 JSON.stringify({
-                    message: "Error uploading your file: " + error
+                    message: "Error uploading your file: " + error.message,
                 }),
                 { status: 500 }
             );
         });
+    
     return uploadPromise;
 }
 
@@ -114,35 +137,27 @@ type FileUploadFormData = {
 
 const requiredFormData = ["title", "file"];
 
-function checkFormdata(formData: FormData): string {
+function getFormdata(formData: FormData): FileUploadFormData {
     console.log("Checking formData");
     const data = Object.fromEntries(formData.entries());
     const keys = Object.keys(data);
 
     requiredFormData.forEach((value) => {
         if (!keys.includes(value)) {
-            return "required key not found";
+            throw new Error("required key not found");
         }
 
         if (data[value] == "") {
-            return "value was empty";
+            throw new Error("value was empty");
         }
     });
 
     const file = formData.get("file");
-    console.log("file:", file);
-    if (!(file instanceof File)) return "file was not a file, it was " + typeof file;
 
-    return "ok"; 
-}
+    console.log("Checking file:", file);
 
-function getFormdata(formData: FormData): FileUploadFormData {
-    const file = formData.get("file");
-
-    if (file instanceof File) {
-        console.log("The file is a file");
-    } else {
-        throw new Error("File was not a file, did you check the form data first?");
+    if (!(file instanceof File)) {
+        throw new Error("File was not a file, it was " + (typeof file));
     }
 
     const fileUploadFormData: FileUploadFormData = {

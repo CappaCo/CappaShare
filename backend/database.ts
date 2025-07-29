@@ -3,10 +3,11 @@ import "@std/dotenv/load";
 // Import clients for mysql and s3 (r2)
 import { Client as sqlClient } from "https://deno.land/x/mysql@v2.12.1/mod.ts";
 import {
-    GetObjectCommand,
-    ListObjectsV2Command,
-    PutObjectCommand,
     S3Client,
+    ListObjectsV2Command,
+    GetObjectCommand,
+    PutObjectCommand,
+    DeleteObjectCommand,
 } from "npm:@aws-sdk/client-s3";
 
 // Environment variables
@@ -161,7 +162,7 @@ class Client {
     }
 
     // mySQL query method
-    query(query: string, params?: (string | number)[]) {
+    query(query: string, params?: (string | number)[]): Promise<Result> {
         return this.sqlClient.query(query, params)
             .catch(error => {
                 if (error instanceof Error) {
@@ -182,31 +183,38 @@ class Client {
     }
 
     // S3 methods
-    async listObjects() {
+    listObjects() {
         const command = new ListObjectsV2Command({
             Bucket: R2_BUCKET
         });
-        const response = await this.s3Client.send(command);
-        return response.Contents || [];
+        return this.s3Client.send(command)
+            .then(data => data.Contents || []);
     }
 
-    async getObject(key: string) {
+    getObject(key: string) {
         const command = new GetObjectCommand({
             Bucket: R2_BUCKET,
             Key: key
         });
-        const response = await this.s3Client.send(command);
-        return response;
+        return this.s3Client.send(command);
     }
 
-    async putObject(key: string, body: string | Uint8Array, contentType: string = "application/octet-stream") {
+    putObject(key: string, body: string | Uint8Array, contentType: string = "application/octet-stream") {
         const command = new PutObjectCommand({
             Bucket: R2_BUCKET,
             Key: key,
             Body: body,
             ContentType: contentType,
         });
-        await this.s3Client.send(command);
+        return this.s3Client.send(command);
+    }
+
+    deleteObject(key: string) {
+        const command = new DeleteObjectCommand({
+            Bucket: R2_BUCKET,
+            Key: key
+        });
+        return this.s3Client.send(command);
     }
 }
 

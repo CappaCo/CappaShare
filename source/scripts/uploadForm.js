@@ -1,15 +1,17 @@
 console.log("uploadForm.js running");
 
-const form = document.getElementById("uploadForm");
+const MB = 1_000_000;
+const fileSizeLimit = 50*MB;
 
+const form = document.getElementById("uploadForm");
 form.addEventListener("submit", uploadForm);
 
 let fileSize = 0;
-const MB = 1_000_000;
-const fileSizeLimit = 100*MB;
 
 function uploadForm(event) {
     event.preventDefault();
+
+    console.log("Form submitted");
 
     const formData = new FormData(form);
 
@@ -26,17 +28,17 @@ function uploadForm(event) {
     }
 
     fileSize = file.size;
-    console.log("fileSize: " + fileSize);
+    console.log("fileSize: " + (fileSize / MB).toPrecision(4) + " MB");
 
     if (fileSize > fileSizeLimit) {
         console.log("File too big");
-        alert("File too big");
+        alert("File too big, maximum size is " + (fileSizeLimit / MB) + " MB");
         return;
     }
 
     const request = new XMLHttpRequest();
 
-    request.addEventListener("progress", uploadProgress);
+    request.upload.addEventListener("progress", uploadProgress);
     request.addEventListener("load", uploadComplete);
     request.addEventListener("error", uploadFailed);
     request.addEventListener("abort", uploadCanceled);
@@ -46,7 +48,7 @@ function uploadForm(event) {
     request.open("POST", "/api/upload");
     request.send(formData);
 
-    console.log("Form submitted");
+    console.log("Form submitted, awaiting response...");
 }
 
 function uploadProgress(e) {
@@ -57,6 +59,7 @@ function uploadProgress(e) {
 
     if (e.loaded == e.total) {
         console.log("Uploading completed");
+        fileSize = 0; // Reset file size after upload
     }
 }
 
@@ -68,9 +71,18 @@ function uploadComplete(e) {
         const response = JSON.parse(e.target.response);
         console.log("Response:", response);
         console.log("Response message", response.message);
-        document.location.href = response.link;
+
+        if (!response.link) {
+            console.error("No link in response");
+        }
+
+        if (confirm("File uploaded successfully. Do you want to view it?")) {
+            console.log("Redirecting to file link:", response.link);
+            document.location.href = response.link;
+        }
     } else {
         console.error("Upload failed with status: " + this.status);
+        console.error("Response:", e.target.response);
         alert("Upload failed. Please try again.");
     }
 }
