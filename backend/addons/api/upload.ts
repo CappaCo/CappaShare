@@ -60,7 +60,9 @@ function handleFileUpload(file: File, id: string) {
     return file.arrayBuffer()
         .then((buffer) => {
             console.log("File buffer size:", buffer.byteLength);
-            return client.putObject(id, new Uint8Array(buffer), file.type);
+            const uint8array = new Uint8Array(buffer);
+            console.log("File buffer (real) size:", uint8array.length);
+            return client.putObject(id, uint8array, file.type);
         })
         .then(() => {
             console.log("File uploaded successfully with ID:", id);
