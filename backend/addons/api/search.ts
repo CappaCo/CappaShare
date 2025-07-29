@@ -12,11 +12,11 @@ export async function run(req: Request): Promise<Response> {
         console.log("getting get request");
 
         const url = new URL(req.url);
-        const q = url.searchParams.get("q");
+        const queryParam = url.searchParams.get("cappashare-search");
 
         let query;
         const params: string[] = [];
-        if (q) {
+        if (queryParam) {
             query = `
             SELECT *
             FROM ${table}
@@ -24,7 +24,7 @@ export async function run(req: Request): Promise<Response> {
             ORDER BY created_at DESC
             LIMIT 20 OFFSET 0;
             `;
-            params.push(q);
+            params.push(queryParam);
         } else {
             query = `
             SELECT *
