@@ -15,6 +15,8 @@ if (!connectionString) {
     throw new Error("MYSQL connection string not found in environment variables. Please set it in your .env file.");
 }
 
+const skipPrimer = Deno.args.includes("silly");
+
 // Parse the connection string to extract individual components
 const url = new URL(connectionString);
 const hostname = url.hostname;
@@ -36,6 +38,8 @@ let primeRetries = 0; // Initialize retry counter
 
 // Primer function
 async function fullPrimer() {
+    if (skipPrimer) return;
+    
     // Run a basic shell command to warm up the connection
     const mysqlArgs = [
         "-h", hostname,
