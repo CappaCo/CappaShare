@@ -228,6 +228,7 @@ body > img {
     border: 1px solid var(--primary);
     padding: 15px;
     border-radius: var(--border-radius);
+    font-size: 1rem;
 }
 
 .button.secondary, button.secondary {
@@ -323,7 +324,11 @@ textarea {
     max-width: 100%;
 }
 
-.fileList > a {
+.fileList * {
+    color: var(--secondary);
+}
+
+.fileList > button {
     background-color: var(--primary);
     border: var(--primary) solid 2px;
     border-radius: 16px;
@@ -333,30 +338,26 @@ textarea {
     margin: var(--margin-vertical) 16px;
 }
 
-.fileList * {
-    color: var(--secondary);
-}
-
-.fileList > a:hover {
+.fileList > button:hover {
     text-decoration: none;
     background-color: var(--primary-hover)
 }
 
-.fileList > a > div {
+.fileList > button > div {
     display: flex;
     flex-shrink: 0;
 }
 
-.fileList > a > div:nth-child(2) {
+.fileList > button > div:nth-child(2) {
     overflow-x: hidden;
     flex-shrink: 1;
 }
 
-.fileList > a > div:nth-child(2) > p {
+.fileList > button > div:nth-child(2) > p {
     white-space: nowrap;
 }
 
-.fileList > a > div > * {
+.fileList > button > div > * {
     padding: 4px;
 }
 
@@ -401,3 +402,41 @@ form {
     background-repeat: no-repeat;
     background-size: 100% 100%;
 }
+
+/* Sam evil modal 💰💰💰💵💵 */
+
+.modal {
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 100lvh;
+    width: 100vw; /* Full width */
+    height: 100vh; /* Full height */
+    /*overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0, 0, 0); /* Fallback color */
+    background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+    margin: 0;
+    transition: top 0.5s ease-in-out;
+    max-width: unset;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.modal.open {
+    top: 0;
+}
+
+.modal-content {
+    background-color: #000000;
+    margin: 0 auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+    border-radius: var(--border-radius);
+}
+
+.buttons > * {
+    margin: 10px;
+}
+

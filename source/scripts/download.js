@@ -49,8 +49,12 @@ function renderFiles(data) {
 
         const link = `/files/${filename}-${id}`;
 
-        const newElement = document.createElement("a");
-        newElement.setAttribute("href", link);
+        const newElement = document.createElement("button");
+        if (verified) {
+            newElement.setAttribute("onclick", `window.location = "${link}";`);
+        } else {
+            newElement.setAttribute("onclick", `openModal("${link}")`);
+        }
 
         const html = unbuiltHtml
             .replaceAll("{{id}}", id)
@@ -63,4 +67,28 @@ function renderFiles(data) {
         newElement.innerHTML = html;
         fileList.appendChild(newElement);
     }
+}
+
+const modal = document.getElementById("warningModal");
+const modalLink = document.getElementById("warningModalLink");
+
+modal.onclick = function (e) {
+    if (e.target == modal) {
+        closeModal();
+    }
+}
+
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+        closeModal();
+    }
+})
+
+function openModal(link) {
+    modal.classList.add("open");
+    modalLink.setAttribute("href", link);
+}
+
+function closeModal() {
+    modal.classList.remove("open");
 }
