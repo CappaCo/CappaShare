@@ -9,15 +9,19 @@
         <div id="hero">
             <h1>This is a product</h1>
             <h2>Yurr</h2>
-        </div>       
-        
+        </div>
+
         <main id="main">
-            <div>
-                <p>preview for "{{title}}" goes here</p>
+            <div class="flex boxevil filePage">
+                <div class="box">
+                    <p>File preview goes here</p>
+                </div>
+                <div class="flex vertical">
+                    <h3 class="box">{{title}}</h3>
+                    <p class="box">{{description}}</p>
+                </div>
             </div>
-            <a href="/api/download/{{filename}}-{{id}}" class="button" download>
-                DOWNLOAD NOW!!!! :O
-            </a>
+            <a href="/api/download/{{filename}}-{{id}}" class="button" download>Download</a>
             <p>Verified status: {{verified}}</p>
         </main>
         
