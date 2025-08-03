@@ -3,7 +3,11 @@ console.log("uploadForm.js running");
 const MB = 1_000_000;
 const fileSizeLimit = 50*MB;
 
+const uploadModal = document.getElementById("uploadModal");
+const elem = document.getElementById("samEvilBar");
+const uploadPercent = document.getElementById("uploadPercent");
 const form = document.getElementById("uploadForm");
+
 form.addEventListener("submit", uploadForm);
 
 let fileSize = 0;
@@ -54,6 +58,8 @@ function uploadForm(event) {
 function uploadProgress(e) {
     if (e.loaded < fileSize) {
         const percent = e.loaded / fileSize * 100;
+        elem.style.width = percent + "%";
+        uploadPercent.innerText = Math.round(percent * 10) / 10 + "%";
         console.log("Percent uploaded: " + percent);
     }
 

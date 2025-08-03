@@ -11,11 +11,11 @@
         </div>       
         
         <main id="main">
-            <form id="uploadForm" method="post" action="/api/upload" enctype="multipart/form-data">
+            <form id="uploadForm" class="filePage" method="post" action="/api/upload" enctype="multipart/form-data">
                 <div class="flex boxevil">
                     <div ondrag="console.log('ondrag')" class="box">
                         <img alt="Upload cloud image." src="/images/cappa the manlet is a silly ahh ahh goober.webp" style="width: 100px; height: 100px;">
-                        <p>Drag and Drop
+                        <p>Drag and Drop</p>
                         <br>
                         or
                         <br>
@@ -30,7 +30,21 @@
             </form>
             <script src="/scripts/uploadForm.js"></script>
         </main>
-        
+        <div id="loadingModal" class="modal">
+            <!-- Modal content -->
+            <div class="modal-content flex vertical">
+                <div>
+                    <h1>Hooray!</h1>
+                    <p>Your file is now uploading.</p>
+                    <div id="samEvilProgress">
+                        <div id="samEvilBar"></div>
+                    </div>
+                </div>
+                <div class="buttons flex">
+                    <button onclick="closeModal()">return</button>
+                </div>
+            </div>
+        </div>
         <!-- footer.html HERE -->
     </body>
 </html>

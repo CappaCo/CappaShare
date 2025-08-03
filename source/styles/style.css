@@ -374,8 +374,9 @@ textarea {
     height: 250px;
 }
 
-form {
+.filePage {
     width: 100%;
+    min-height: 50vh;
 }
 
 .icon {
@@ -386,13 +387,13 @@ form {
 
 /* samEvilBar 🥀 */
 
-.samEvilProgress {
+#samEvilProgress {
     width: 100%;
     justify-content: left;
     display: flex;
 }
 
-.samEvilBar {
+#samEvilBar {
     width: 0%;
     height: 30px;
     border-radius: 0;
