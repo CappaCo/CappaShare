@@ -30,12 +30,26 @@ document.onscroll = function onscroll() {
 
 const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
-const evilThings = document.getElementsByClassName("evilDownload");
+// Modal code
+class Modal {
+    constructor(modalId) {
+        this.modalId = modalId;
+        this.element = document.getElementById(modalId);
 
-if (evilThings.length > 0) activateEvil();
+        this.element.onclick = (e) => {
+            if (e.target == this.element) this.close();
+        };
 
-function activateEvil() {
-    for (const evilThing of evilThings) {
-        console.log("Sam is evil:", evilThing);
-    };
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") this.close();
+        });
+    }
+
+    open() {
+        this.element.classList.add("open");
+    }
+
+    close() {
+        this.element.classList.remove("open");
+    }
 }

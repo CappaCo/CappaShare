@@ -53,7 +53,7 @@ function renderFiles(data) {
         if (verified) {
             newElement.setAttribute("onclick", `window.location = "${link}";`);
         } else {
-            newElement.setAttribute("onclick", `openModal("${link}")`);
+            newElement.setAttribute("onclick", `openWarning("${link}")`);
         }
 
         const html = unbuiltHtml
@@ -69,26 +69,10 @@ function renderFiles(data) {
     }
 }
 
-const modal = document.getElementById("warningModal");
+const modal = new Modal("warningModal");
 const modalLink = document.getElementById("warningModalLink");
 
-modal.onclick = function (e) {
-    if (e.target == modal) {
-        closeModal();
-    }
-}
-
-document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') {
-        closeModal();
-    }
-})
-
-function openModal(link) {
-    modal.classList.add("open");
+function openWarning(link) {
     modalLink.setAttribute("href", link);
-}
-
-function closeModal() {
-    modal.classList.remove("open");
+    modal.open();
 }

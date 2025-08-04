@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!-- head.html START -->
+    <meta
+        name="description"
+        content="The CappaShare website made by Casper, Sam and Noah. (Testing page)"
+    >
+    <!-- head.html END -->
+    <style>
+        .modal {
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 100lvh;
+            width: 100vw; /* Full width */
+            height: 100vh; /* Full height */
+            /*overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0, 0, 0); /* Fallback color */
+            background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+            margin: 0;
+            transition: top 0.5s ease-in-out;
+            max-width: unset;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+        }
+
+        .modal-content {
+            background-color: #000000;
+            margin: 0 auto; /* 15% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; /* Could be more or less, depending on screen size */
+            border-radius: var(--border-radius);
+        }
+
+        .buttons > * {
+            margin: 10px;
+        }
+    </style>
+    <body>
+        <!-- nav.html HERE -->
+
+        <div id="hero">
+            <h1>CappaShare</h1>
+            <h2>Test Time :)</h2>
+        </div>
+
+        <main id="main">
+            <!-- Trigger/Open The Modal -->
+            <button id="button" onclick="openModal()">Modal</button>
+        </main>
+
+        
+        <!-- The Modal -->
+        <div id="myModal" class="modal">
+            <!-- Modal content -->
+            <div class="modal-content flex vertical">
+                <div>
+                    <div class="samEvilProgress">
+                <div class="samEvilBar"><p>0%</p></div>
+            </div>
+            <br>
+            <button onclick="move()">Load my thing</button>
+            <button onclick="width = 0; stopLoading();">Reset</button>
+                </div>
+
+                <div class="buttons flex">
+                    <button onclick="closeModal()">return</button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // Get the modal
+            var modal = document.getElementById("myModal");
+
+            modal.onclick = function (e) {
+                if (e.target == modal) {
+                    closeModal();
+                }
+            }
+
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape') {
+                    closeModal();
+                }
+            })
+
+            function openModal() {
+                modal.style.top = "0";
+            }
+
+            function closeModal() {
+                modal.style.top = "100lvh";
+            }
+            const container = document.getElementsByClassName("samEvilProgress")[0];
+            const elem = container.getElementsByClassName("samEvilBar")[0];
+            const text = elem.getElementsByTagName("p")[0];
+            
+            let i = 0;
+            let width = 0;
+            let velocity = 0;
+            let id;
+
+            function frame() {
+                if (width < 100) {
+                    velocity += (Math.random() - 0.1)/10;
+                    velocity = clamp(velocity*0.8, -1, 1);
+                    width += velocity;
+                    width = clamp(width, 0, 100);
+                    updateProgress();
+                } else {
+                    stopLoading();
+                }
+            }
+            
+            function move() {
+                if (i == 0) {
+                    i = 1;
+                    id = setInterval(frame, 10);
+                }
+            }
+
+            function stopLoading() {
+                clearInterval(id);
+                i = 0;
+                velocity = 0;
+                updateProgress();
+                alert("Huzzah!");
+            }
+
+            function updateProgress() {
+                elem.style.width = width + "%";
+                text.innerText = Math.round(width) + "%";
+            }
+        </script>
+        <!-- footer.html HERE -->
+    </body>
+</html>

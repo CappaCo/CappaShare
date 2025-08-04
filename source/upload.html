@@ -26,10 +26,11 @@
                         <textarea class="box" type="text" id="description" name="description" rows="4" cols="50" placeholder="Add Description Here" ></textarea>
                     </div>
                 </div>
-                <input class="disabled" type="submit" value="Upload File" style="margin: 50px; font-size: 35px;">
+
+                <input type="submit" value="Upload File" style="margin: 50px; font-size: 35px;">
             </form>
-            <script src="/scripts/uploadForm.js"></script>
         </main>
+
         <div id="loadingModal" class="modal">
             <!-- Modal content -->
             <div class="modal-content flex vertical">
@@ -41,10 +42,13 @@
                     </div>
                 </div>
                 <div class="buttons flex">
-                    <button onclick="closeModal()">return</button>
+                    <button onclick="loadingModal.close()">return</button>
                 </div>
             </div>
         </div>
+
+        <script defer src="/scripts/uploadForm.js"></script>
+
         <!-- footer.html HERE -->
     </body>
 </html>

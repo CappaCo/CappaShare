@@ -3,7 +3,7 @@ console.log("uploadForm.js running");
 const MB = 1_000_000;
 const fileSizeLimit = 50*MB;
 
-const uploadModal = document.getElementById("uploadModal");
+const loadingModal = new Modal("loadingModal");
 const elem = document.getElementById("samEvilBar");
 const uploadPercent = document.getElementById("uploadPercent");
 const form = document.getElementById("uploadForm");
@@ -40,6 +40,7 @@ function uploadForm(event) {
         return;
     }
 
+    loadingModal.open();
     const request = new XMLHttpRequest();
 
     request.upload.addEventListener("progress", uploadProgress);

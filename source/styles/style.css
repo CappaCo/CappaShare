@@ -387,21 +387,18 @@ textarea {
 
 /* samEvilBar 🥀 */
 
-#samEvilProgress {
+.samEvilProgress {
     width: 100%;
     justify-content: left;
     display: flex;
 }
 
-#samEvilBar {
+.samEvilBar {
     width: 0%;
-    height: 30px;
-    border-radius: 0;
+    height: 20px;
+    border-radius: 25px;
     margin: 0;
-    /*background-color: grey;*/
-    background-image: url("/images/freaky-money.gif");
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
+    background-color: grey;
 }
 
 /* Sam evil modal 💰💰💰💵💵 */
