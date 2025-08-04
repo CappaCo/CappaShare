@@ -69,10 +69,10 @@ function renderFiles(data) {
     }
 }
 
-const modal = new Modal("warningModal");
+const warningModal = new Modal("warningModal");
 const modalLink = document.getElementById("warningModalLink");
 
 function openWarning(link) {
     modalLink.setAttribute("href", link);
-    modal.open();
+    warningModal.open();
 }
