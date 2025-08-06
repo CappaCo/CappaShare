@@ -14,67 +14,67 @@ export async function run(req: Request): Promise<Response> {
     
     if (method != "POST") return new Response("Method not allowed", { status: 405 });
 
-    // TODO: async
     console.log("getting formdata");
-    const formData = await req.formData();
-    console.log("got formdata");
+    const uploadPromise = req.formData()
+        .then((formData) => {
+            console.log("got formdata");
 
-    let data: FileUploadFormData;
-    try {
-        data = getFormdata(formData);
-    } catch (error) {
-        console.error("Error getting formdata:", error);
-        if (error instanceof Error) {
-            return new Response(
-                JSON.stringify({ message: "Error getting formdata: " + error.message }),
-                { status: 400 }
-            );
-        } else {
-            return new Response(
-                JSON.stringify({ message: "Unknown error getting formdata" }),
-                { status: 500 }
-            );
-        }
-    }
+            let data: FileUploadFormData;
+            try {
+                data = getFormdata(formData);
+            } catch (error) {
+                console.error("Error getting formdata:", error);
+                if (error instanceof Error) {
+                    return new Response(
+                        JSON.stringify({ message: "Error getting formdata: " + error.message }),
+                        { status: 400 }
+                    );
+                } else {
+                    return new Response(
+                        JSON.stringify({ message: "Unknown error getting formdata" }),
+                        { status: 500 }
+                    );
+                }
+            }
 
-    const fileCheckResponse = checkFile(data.file);
-    if (fileCheckResponse != "ok") {
-        console.error("File checks failed: " + fileCheckResponse);
-        return new Response(fileCheckResponse, { status: 400 });
-    }
-    
-    const id = generateId();
-    console.log("File ID: " + id);
-
-    const uploadPromise = handleFileUpload(data.file, id)
-        .then(() => {
-            console.log("File upload completed, uploading formData");
-            return handleFormDataUpload(data, id);
-        })
-        .catch((error) => {
-            console.error("Error uploading file to R2:", id, error);
-            return new Response(
-                JSON.stringify({
-                    message: "Error uploading your file: " + error.message
-                }),
-                { status: 500 }
-            );
-        })
-        .then(() => {
-            console.log("Database upload also completed");
-            return new Response(JSON.stringify({
-                message: "file uploaded",
-                link: `/files/${data.file.name}-${id}`,
-            }));
-        })
-        .catch((error) => {
-            console.error("Error uploading file data to database", id, error);
-            return new Response(
-                JSON.stringify({
-                    message: "Error uploading your file: " + error.message,
-                }),
-                { status: 500 }
-            );
+            const fileCheckResponse = checkFile(data.file);
+            if (fileCheckResponse != "ok") {
+                console.error("File checks failed: " + fileCheckResponse);
+                return new Response(fileCheckResponse, { status: 400 });
+            }
+            
+            const id = generateId();
+            console.log("File ID: " + id);
+            return handleFileUpload(data.file, id)
+                .then(() => {
+                    console.log("File upload completed, uploading formData");
+                    return handleFormDataUpload(data, id);
+                })
+                .catch((error) => {
+                    console.error("Error uploading file to R2:", id, error);
+                    return new Response(
+                        JSON.stringify({
+                            message: "Error uploading your file: " + error.message
+                        }),
+                        { status: 500 }
+                    );
+                })
+                .then(() => {
+                    console.log("Database upload also completed");
+                    return new Response(JSON.stringify({
+                        message: "file uploaded",
+                        link: `/files/${data.file.name}-${id}`,
+                    }));
+                })
+                .catch((error) => {
+                    console.error("Error uploading file data to database", id, error);
+                    return new Response(
+                        JSON.stringify({
+                            message: "Error uploading your file: " + error.message,
+                        }),
+                        { status: 500 }
+                    );
+                });
         });
     
     return uploadPromise;

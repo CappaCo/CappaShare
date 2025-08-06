@@ -35,13 +35,16 @@ class Modal {
     constructor(modalId) {
         this.modalId = modalId;
         this.element = document.getElementById(modalId);
-        closeButton = this.element.querySelector(".closeButton");
+        console.log("making new modal with:", this.element);
+        this.closeButton = this.element.querySelector(".closeButton");
 
         this.element.onclick = (e) => {
             if (e.target == this.element) this.close();
         };
 
-        closeButton.onclick = "warningModal.close()";
+        this.closeButton.onclick = () => {
+            this.close();
+        };
 
         document.addEventListener("keydown", (event) => {
             if (event.key === "Escape") this.close();

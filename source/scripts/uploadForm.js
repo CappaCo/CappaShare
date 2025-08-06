@@ -4,8 +4,8 @@ const MB = 1_000_000;
 const fileSizeLimit = 50*MB;
 
 const loadingModal = new Modal("loadingModal");
-const elem = document.getElementById("samEvilBar");
-const uploadPercent = document.getElementById("uploadPercent");
+const samEvilBar = document.getElementsByClassName("samEvilBar")[0];
+const uploadPercent = document.getElementsByClassName("uploadPercent")[0];
 const form = document.getElementById("uploadForm");
 
 form.addEventListener("submit", uploadForm);
@@ -15,7 +15,7 @@ let fileSize = 0;
 function uploadForm(event) {
     event.preventDefault();
 
-    console.log("Form submitted");
+    console.log("Form submit button pressed");
 
     const formData = new FormData(form);
 
@@ -40,7 +40,9 @@ function uploadForm(event) {
         return;
     }
 
+    console.log("opening modal");
     loadingModal.open();
+    console.log("making new request");
     const request = new XMLHttpRequest();
 
     request.upload.addEventListener("progress", uploadProgress);
@@ -59,15 +61,20 @@ function uploadForm(event) {
 function uploadProgress(e) {
     if (e.loaded < fileSize) {
         const percent = e.loaded / fileSize * 100;
-        elem.style.width = percent + "%";
-        uploadPercent.innerText = Math.round(percent * 10) / 10 + "%";
+        updateLoadingBar(percent);
         console.log("Percent uploaded: " + percent);
     }
 
     if (e.loaded == e.total) {
+        updateLoadingBar(100);
         console.log("Uploading completed");
         fileSize = 0; // Reset file size after upload
     }
+}
+
+function updateLoadingBar(percent) {
+    samEvilBar.style.width = percent + "%";
+    uploadPercent.innerText = Math.round(percent * 10) / 10 + "%";
 }
 
 function uploadComplete(e) {
