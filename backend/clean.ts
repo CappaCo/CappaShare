@@ -1,5 +1,9 @@
 import { client } from "./database.ts";
 
+function removeOldFiles() {
+    //DELETE FROM dev WHERE created_at < (NOW() - INTERVAL 7 DAY);
+}
+
 function cleanDatabases() {
     console.log("Cleaning databases...");
 
@@ -11,8 +15,8 @@ function cleanDatabases() {
             const databaseIds = new Set(databaseEntries.map((entry) => entry.id));
             const objectIds = new Set(objects.map((object) => object.Key));
 
-            console.log("Database IDs:", databaseIds);
-            console.log("Object IDs:", objectIds);
+            //console.log("Database IDs:", databaseIds);
+            //console.log("Object IDs:", objectIds);
 
             const databaseEntriesToDelete = databaseIds.difference(objectIds);
             const objectsToDelete = objectIds.difference(databaseIds);
@@ -54,8 +58,7 @@ function cleanDatabases() {
 }
 
 if (import.meta.main) {
-    await cleanDatabases()
-        .then(() => {
-            console.log("Databases cleaned successfully.");
-        });
+    await removeOldFiles();
+    await cleanDatabases();
+    console.log("Databases cleaned successfully.");
 }
