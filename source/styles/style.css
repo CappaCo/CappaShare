@@ -22,15 +22,21 @@
     --border-radius: 16px;
 }
 
-@media only screen and (max-width: 1000px) {
-    :root {
-        --space-in: 2em;
-    }
-}
-
 @media only screen and (max-width: 1600px) {
     :root {
         --space-in: 10em;
+    }
+}
+
+@media only screen and (max-width: 1200px) {
+    :root {
+        --space-in: 10px;
+    }
+}
+
+@media only screen and (max-width: 1000px) {
+    nav #searchForm {
+        display: none;
     }
 }
 
