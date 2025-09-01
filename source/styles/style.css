@@ -380,9 +380,14 @@ textarea {
     height: 250px;
 }
 
+/* File page */
 .filePage {
     width: 100%;
     min-height: 50vh;
+}
+
+.filePage > * {
+    margin: var(--margin);
 }
 
 .icon {
