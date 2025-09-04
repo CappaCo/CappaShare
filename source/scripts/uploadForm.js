@@ -1,8 +1,10 @@
 console.log("uploadForm.js running");
 
+// Define constants
 const MB = 1_000_000;
 const fileSizeLimit = 50*MB;
 
+// Load the parts
 const loadingModal = new Modal("loadingModal");
 const samEvilBar = document.getElementsByClassName("samEvilBar")[0];
 const uploadPercent = document.getElementsByClassName("uploadPercent")[0];
@@ -13,12 +15,14 @@ form.addEventListener("submit", uploadForm);
 let fileSize = 0;
 
 function uploadForm(event) {
+    // Prevent the form from submitting in the default style
     event.preventDefault();
 
     console.log("Form submit button pressed");
 
     const formData = new FormData(form);
 
+    // Check if the title doesn't exist
     if (!formData.get("title")) {
         alert("Title is required");
         return;
@@ -26,11 +30,13 @@ function uploadForm(event) {
 
     const file = document.getElementById("file").files[0];
 
+    // Check if the file doesn't exist
     if (!file) {
         alert("No file selected");
         return;
     }
 
+    // Check the file size
     fileSize = file.size;
     console.log("fileSize: " + (fileSize / MB).toPrecision(4) + " MB");
 
@@ -40,19 +46,27 @@ function uploadForm(event) {
         return;
     }
 
+    // Open the modal
     console.log("opening modal");
     loadingModal.open();
+
+    // Make a new XMLHttpRequest
     console.log("making new request");
     const request = new XMLHttpRequest();
 
+    // Add event listeners to the request
     request.upload.addEventListener("progress", uploadProgress);
     request.addEventListener("load", uploadComplete);
     request.addEventListener("error", uploadFailed);
     request.addEventListener("abort", uploadCanceled);
 
+    // Set the timeout
     request.timeout = 30 * 1000;
 
+    // Open the request
     request.open("POST", "/api/upload");
+
+    // Upload the file!
     request.send(formData);
 
     console.log("Form submitted, awaiting response...");

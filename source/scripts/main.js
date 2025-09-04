@@ -6,25 +6,26 @@ let offset = 0;
 const funny = false;
 const nav = document.getElementsByTagName("nav")[0];
 
-function styleTop(num) {
-    nav.style.top = num + "px";
-}
-
 // Keep code in here to a minimum because it is run often, we don't want the client to lag when scrolling
 document.onscroll = function onscroll() {
     const currentScrollPos = globalThis.pageYOffset;
 
+    // Check the scroll position
     if (currentScrollPos < 100) {
         offset = 0;
     } else {
         if (funny) {
             offset += currentScrollPos - prevScrollpos;
         } else {
+            // Make the offset increment by the scroll position delta (prev - current)
             offset += prevScrollpos - currentScrollPos;
             offset = clamp(offset, -110, 0);
         }
     }
-    styleTop(offset);
+    // Make the nav come down from the top by offset px
+    nav.style.top = offset + "px";
+
+    // Update previous scroll position
     prevScrollpos = currentScrollPos;
 }
 
