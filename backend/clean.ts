@@ -1,60 +1,66 @@
 import { client } from "./database.ts";
 
-function removeOldFiles() {
-    //DELETE FROM dev WHERE created_at < (NOW() - INTERVAL 7 DAY);
+async function removeOldFiles() {
+    const deleteQuery = "DELETE FROM files WHERE created_at < (NOW() - INTERVAL 7 DAY);";
+
+    console.log("Deleting old entries");
+
+    const result = await client.query(deleteQuery);
+
+    console.log("Result:", result);
 }
 
-function cleanDatabases() {
+async function cleanDatabases() {
     console.log("Cleaning databases...");
 
-    return Promise.all([
+    const [databaseEntries, objects] = await Promise.all([
         client.query("SELECT id FROM files;"),
         client.listObjects(),
-    ])
-        .then(([databaseEntries, objects]) => {
-            const databaseIds = new Set(databaseEntries.map((entry) => entry.id));
-            const objectIds = new Set(objects.map((object) => object.Key));
+    ]);
+    const databaseIds = new Set(
+        databaseEntries.map((entry) => entry.id),
+    );
+    const objectIds = new Set(objects.map((object) => object.Key));
 
-            //console.log("Database IDs:", databaseIds);
-            //console.log("Object IDs:", objectIds);
+    //console.log("Database IDs:", databaseIds);
+    //console.log("Object IDs:", objectIds);
 
-            const databaseEntriesToDelete = databaseIds.difference(objectIds);
-            const objectsToDelete = objectIds.difference(databaseIds);
+    const databaseEntriesToDelete = databaseIds.difference(objectIds);
+    const objectsToDelete = objectIds.difference(databaseIds);
 
-            console.log("Database entries to delete:", databaseEntriesToDelete);
-            console.log("Objects to delete:", objectsToDelete);
+    console.log("Database entries to delete:", databaseEntriesToDelete);
+    console.log("Objects to delete:", objectsToDelete);
 
-            const pinkyPromises = [];
+    const pinkyPromises = [];
 
-            // Delete database entries
-            if (databaseEntriesToDelete.size > 0) {
-                const deleteQuery = `DELETE FROM files WHERE id IN (?);`;
-                const params = [
-                    Array.from(databaseEntriesToDelete).map((id) => `'${id}'`)
-                        .join(", "),
-                ];
+    // Delete database entries
+    if (databaseEntriesToDelete.size > 0) {
+        const deleteQuery = "DELETE FROM files WHERE id IN (?);";
+        const params = [
+            Array.from(databaseEntriesToDelete).map((id) => `'${id}'`)
+                .join(", "),
+        ];
 
-                console.log("Deleting database entries: " + params);
+        console.log("Deleting database entries:", params);
 
-                pinkyPromises.push(
-                    client.query(deleteQuery, params),
-                );
-            }
+        pinkyPromises.push(
+            client.query(deleteQuery, params),
+        );
+    }
 
-            // Delete objects from R2
-            if (objectsToDelete.size > 0) {
-                Array.from(objectsToDelete).forEach((id) => {
-                    if (!id) return;
-                    console.log("Deleting object from R2: " + id);
+    // Delete objects from R2
+    if (objectsToDelete.size > 0) {
+        Array.from(objectsToDelete).forEach((id) => {
+            if (!id) return;
+            console.log("Deleting object from R2: " + id);
 
-                    pinkyPromises.push(
-                        client.deleteObject(id),
-                    );
-                });
-            }
-
-            return Promise.all(pinkyPromises);
+            pinkyPromises.push(
+                client.deleteObject(id),
+            );
         });
+    }
+
+    await Promise.all(pinkyPromises);
 }
 
 if (import.meta.main) {
